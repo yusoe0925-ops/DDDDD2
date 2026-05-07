@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SSOJU APPLICATION</title>
+
+<style>
+body{
+    background:#f6f6f6;
+    font-family:'Pretendard',sans-serif;
+    padding:40px 15px;
+}
+
+.form-wrap{
+    width:100%;
+    max-width:650px;
+    margin:0 auto;
+}
+
+.title{
+    display:inline-block;
+    background:#ff6f0f;
+    color:white;
+    font-size:11px;
+    font-weight:800;
+    padding:6px 14px;
+    border-radius:10px 10px 0 0;
+    letter-spacing:1px;
+}
+
+.box{
+    background:white;
+    border:2px solid #ff6f0f;
+    border-radius:0 15px 15px 15px;
+    padding:20px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.08);
+}
+
+.copy-btn{
+    width:100%;
+    border:none;
+    background:#ff6f0f;
+    color:white;
+    font-size:13px;
+    font-weight:700;
+    padding:12px;
+    border-radius:10px;
+    cursor:pointer;
+    transition:0.2s;
+}
+
+.copy-btn:hover{
+    opacity:0.9;
+    transform:translateY(-1px);
+}
+
+textarea{
+    width:100%;
+    height:260px;
+    margin-top:15px;
+    border:1px dashed #ffb27d;
+    background:#fffaf7;
+    border-radius:12px;
+    padding:18px;
+    box-sizing:border-box;
+    resize:none;
+    outline:none;
+    font-size:14px;
+    line-height:1.8;
+    color:#444;
+    font-family:'Pretendard',sans-serif;
+}
+
+.sub{
+    margin-top:15px;
+    text-align:center;
+    font-size:12px;
+    color:#999;
+    line-height:1.6;
+}
+</style>
+</head>
+
+<body>
+
+<div class="form-wrap">
+
+    <div class="title">
+        APPLICATION FORM
+    </div>
+
+    <div class="box">
+
+        <button class="copy-btn" onclick="copyForm()">
+            신청 양식 복사하기
+        </button>
+
+<textarea id="commissionForm" readonly>닉네임 :
+
+신청 타입 :
+
+캐릭터 자료 :
+
+구도 / 분위기 :
+
+원하는 표정 :
+
+추가 요청사항 :
+
+비공개 여부 :
+
+마감일 여부 :</textarea>
+
+        <div class="sub">
+            버튼 클릭 후 붙여넣기 해서 작성해주세요 :)
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+function copyForm() {
+    const text = document.getElementById("commissionForm");
+
+    text.select();
+    text.setSelectionRange(0, 99999);
+
+    navigator.clipboard.writeText(text.value);
+
+    alert("신청 양식이 복사되었습니다!");
+}
+</script>
+
+</body>
+</html>
