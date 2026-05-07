@@ -1,136 +1,145 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SSOJU APPLICATION</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>작가 쏘주 상세페이지</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;500;900&display=swap" rel="stylesheet">
+    <style>
+        /* [1] 기본 스타일 및 배경 */
+        body { margin: 0; padding: 0; font-family: 'Noto Sans KR', sans-serif; background-color: #f4f4f4; color: #333; overflow-x: hidden; }
+        .wrap { width: 100%; max-width: 800px; margin: 0 auto; background: #fff; box-shadow: 0 0 50px rgba(0,0,0,0.1); }
+        
+        /* [2] 애니메이션 효과 */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes floating {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .fade-in { animation: fadeInUp 0.8s ease-out forwards; }
 
-<style>
-body{
-    background:#f6f6f6;
-    font-family:'Pretendard',sans-serif;
-    padding:40px 15px;
-}
+        /* [3] 헤더 섹션 */
+        header { 
+            background: linear-gradient(135deg, #ff6f0f 0%, #ff4d4d 100%); 
+            padding: 100px 20px; text-align: center; color: #fff; 
+        }
+        .badge { 
+            display: inline-block; background: rgba(255,255,255,0.2); 
+            padding: 5px 15px; border-radius: 50px; font-size: 13px; font-weight: 800; margin-bottom: 20px; 
+        }
+        header h1 { font-size: 42px; margin: 0; font-weight: 900; animation: floating 3s infinite ease-in-out; }
+        header p { font-size: 18px; opacity: 0.9; margin-top: 15px; }
 
-.form-wrap{
-    width:100%;
-    max-width:650px;
-    margin:0 auto;
-}
+        /* [4] 섹션 공통 */
+        section { padding: 60px 25px; border-bottom: 1px solid #f0f0f0; }
+        .sec-title { text-align: center; margin-bottom: 40px; }
+        .sec-title h2 { font-size: 28px; font-weight: 900; color: #ff6f0f; position: relative; display: inline-block; }
+        .sec-title h2::after { content: ''; position: absolute; bottom: -10px; left: 0; width: 100%; height: 4px; background: #ff6f0f; }
 
-.title{
-    display:inline-block;
-    background:#ff6f0f;
-    color:white;
-    font-size:11px;
-    font-weight:800;
-    padding:6px 14px;
-    border-radius:10px 10px 0 0;
-    letter-spacing:1px;
-}
+        /* [5] 카드 스타일 (이벤트/공지사항) */
+        .card { 
+            background: #fff; border: 1px solid #eee; border-radius: 20px; 
+            padding: 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.03); 
+        }
+        .event-card { background: #fff0e6; border: 2px dashed #ff6f0f; text-align: center; }
 
-.box{
-    background:white;
-    border:2px solid #ff6f0f;
-    border-radius:0 15px 15px 15px;
-    padding:20px;
-    box-shadow:0 8px 20px rgba(0,0,0,0.08);
-}
+        /* [6] 양식 복사기 스타일 */
+        .form-group { margin-bottom: 20px; text-align: left; }
+        .form-group label { display: block; font-weight: 800; margin-bottom: 8px; font-size: 14px; color: #555; }
+        .form-control { 
+            width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px; 
+            box-sizing: border-box; font-size: 14px; 
+        }
+        .copy-btn { 
+            width: 100%; padding: 15px; background: #ff6f0f; color: #fff; 
+            border: none; border-radius: 10px; font-size: 16px; font-weight: 900; 
+            cursor: pointer; transition: 0.3s; 
+        }
+        .copy-btn:hover { background: #e65a00; transform: scale(1.02); }
 
-.copy-btn{
-    width:100%;
-    border:none;
-    background:#ff6f0f;
-    color:white;
-    font-size:13px;
-    font-weight:700;
-    padding:12px;
-    border-radius:10px;
-    cursor:pointer;
-    transition:0.2s;
-}
-
-.copy-btn:hover{
-    opacity:0.9;
-    transform:translateY(-1px);
-}
-
-textarea{
-    width:100%;
-    height:260px;
-    margin-top:15px;
-    border:1px dashed #ffb27d;
-    background:#fffaf7;
-    border-radius:12px;
-    padding:18px;
-    box-sizing:border-box;
-    resize:none;
-    outline:none;
-    font-size:14px;
-    line-height:1.8;
-    color:#444;
-    font-family:'Pretendard',sans-serif;
-}
-
-.sub{
-    margin-top:15px;
-    text-align:center;
-    font-size:12px;
-    color:#999;
-    line-height:1.6;
-}
-</style>
+        /* [7] 알림창(Toast) */
+        #toast {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: rgba(0,0,0,0.8); color: #fff; padding: 10px 30px;
+            border-radius: 50px; font-size: 14px; display: none; z-index: 1000;
+        }
+    </style>
 </head>
-
 <body>
 
-<div class="form-wrap">
+<div class="wrap">
+    <header>
+        <div class="badge">VIRTUAL & GRAPHIC ARTIST</div>
+        <h1 class="fade-in">안녕하세요!<br>작가 쏘주입니다 🍶</h1>
+        <p class="fade-in">하나뿐인 소중한 결과물을 약속드립니다.</p>
+    </header>
 
-    <div class="title">
-        APPLICATION FORM
-    </div>
-
-    <div class="box">
-
-        <button class="copy-btn" onclick="copyForm()">
-            신청 양식 복사하기
-        </button>
-
-<textarea id="commissionForm" readonly>닉네임 :
-
-신청 타입 :
-
-캐릭터 자료 :
-
-구도 / 분위기 :
-
-원하는 표정 :
-
-추가 요청사항 :
-
-비공개 여부 :
-
-마감일 여부 :</textarea>
-
-        <div class="sub">
-            버튼 클릭 후 붙여넣기 해서 작성해주세요 :)
+    <section>
+        <div class="sec-title fade-in"><h2>EVENT</h2></div>
+        <div class="card event-card fade-in">
+            <h3 style="margin-top: 0;">🎁 오픈 기념 리뷰 이벤트 🎁</h3>
+            <div style="font-size: 32px; font-weight: 900; color: #ff6f0f; margin: 15px 0;">1 + 1 EVENT</div>
+            <p>리뷰 작성을 약속해 주시면 모든 옵션을<br><b>무료로 업그레이드</b> 해드립니다!</p>
         </div>
+    </section>
 
-    </div>
+    <section>
+        <div class="sec-title fade-in"><h2>NOTICE</h2></div>
+        <div class="card fade-in">
+            <ul style="list-style: none; padding: 0; margin: 0; line-height: 2;">
+                <li>📌 모든 저작권은 <b>작가 쏘주</b>에게 귀속됩니다.</li>
+                <li>📌 결제 전 아트머그 메시지 문의는 필수입니다.</li>
+                <li>📌 작업물은 포트폴리오로 사용될 수 있습니다.</li>
+                <li>📌 무단 도용 및 2차 가공 시 법적 책임을 물을 수 있습니다.</li>
+            </ul>
+        </div>
+    </section>
 
+    <section style="background: #fafafa;">
+        <div class="sec-title fade-in"><h2>ORDER FORM</h2></div>
+        <div class="card fade-in">
+            <div class="form-group">
+                <label>1. 닉네임 / 용도 (방송용, 개인소장 등)</label>
+                <input type="text" id="name" class="form-control" placeholder="예: 쏘주 / 방송용">
+            </div>
+            <div class="form-group">
+                <label>2. 신청 타입 및 옵션</label>
+                <input type="text" id="type" class="form-control" placeholder="예: A타입 / 파티클 효과 추가">
+            </div>
+            <div class="form-group">
+                <label>3. 상세 요청사항 및 참고자료</label>
+                <textarea id="desc" class="form-control" rows="4" placeholder="캐릭터의 특징이나 원하는 분위기를 적어주세요."></textarea>
+            </div>
+            <button class="copy-btn" onclick="copyToClipboard()">양식 복사하고 문의하기</button>
+        </div>
+    </section>
 </div>
 
+<div id="toast">복사가 완료되었습니다!</div>
+
 <script>
-function copyForm() {
-    const text = document.getElementById("commissionForm");
+    function copyToClipboard() {
+        const name = document.getElementById('name').value;
+        const type = document.getElementById('type').value;
+        const desc = document.getElementById('desc').value;
 
-    text.select();
-    text.setSelectionRange(0, 99999);
+        const fullText = `[문의 양식]\n1. 닉네임/용도: ${name}\n2. 타입/옵션: ${type}\n3. 요청사항: ${desc}`;
 
-    navigator.clipboard.writeText(text.value);
+        const t = document.createElement("textarea");
+        document.body.appendChild(t);
+        t.value = fullText;
+        t.select();
+        document.execCommand('copy');
+        document.body.removeChild(t);
 
-    alert("신청 양식이 복사되었습니다!");
-}
+        // 토스트 알림 보여주기
+        const toast = document.getElementById('toast');
+        toast.style.display = 'block';
+        setTimeout(() => { toast.style.display = 'none'; }, 2000);
+    }
 </script>
 
 </body>
