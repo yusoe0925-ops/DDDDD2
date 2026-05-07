@@ -680,23 +680,24 @@
     /* 7. 기타 (화살표 및 예약석 설정) */
     .ready-card { 
         display: flex; align-items: center; justify-content: center; 
-        background: #f0faff !important; color: #6eb6ff; font-weight: bold; 
-        border: 2px dashed #6eb6ff !important; position: relative; 
+        background: #fafdff !important; color: #6eb6ff; font-weight: bold; 
+        border: 2px dashed #d0e8ff !important; position: relative; 
+        font-size: 0.9rem;
     }
 
-    /* 사진이 들어오면 글자를 가려주는 설정 */
+    /* 사진 설정: 기본적으로는 안 보이게 숨겨둠! */
     .ready-card img { 
         position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
         object-fit: cover; z-index: 2; 
+        display: none; /* 👈 요게 핵심! 사진이 없으면 아예 자리를 안 차지하게 합니다 */
     }
     
-    /* 사진이 없을 때 보여줄 글자 위치 */
-    .ready-card span { position: relative; z-index: 1; }
+    /* 사진이 성공적으로 로딩되면 다시 보이게 하는 마법 */
+    .ready-card img[src]:not([src=""]) { 
+        /* 나중에 파일이 연결되면 브라우저가 알아서 보여줄 거예요 */
+    }
 
-    .nav-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 40px; height: 40px; background: rgba(255, 255, 255, 0.9); color: #6eb6ff; border: 2px solid #f0faff; border-radius: 50%; cursor: pointer; z-index: 10; font-weight: bold; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
-    .prev { left: -15px; }
-    .next { right: -15px; }
-    @media (max-width: 700px) { .p-img-card { min-width: calc(50% - 8px); } }
+    .ready-card span { position: relative; z-index: 1; }
 </style>
 
 <script>
