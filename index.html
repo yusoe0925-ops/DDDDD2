@@ -1,1989 +1,245 @@
+<div class="receipt-machine-wrap">
 
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <style>
-        /* ================= 폰트 설정 ================= */
-        @font-face { font-family: 'Paperozi'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-1Thin.woff2') format('woff2'); font-weight: 100; font-display: swap; }
-        @font-face { font-family: 'Paperozi'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-2ExtraLight.woff2') format('woff2'); font-weight: 200; font-display: swap; }
-        @font-face { font-family: 'Paperozi'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-3Light.woff2') format('woff2'); font-weight: 300; font-display: swap; }
-        @font-face { font-family: 'Paperozi'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-4Regular.woff2') format('woff2'); font-weight: 400; font-display: swap; }
-        @font-face { font-family: 'Paperozi'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-5Medium.woff2') format('woff2'); font-weight: 500; font-display: swap; }
-        @font-face { font-family: 'Paperozi'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-6SemiBold.woff2') format('woff2'); font-weight: 600; font-display: swap; }
-        @font-face { font-family: 'Paperozi'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-7Bold.woff2') format('woff2'); font-weight: 700; font-display: swap; }
-        @font-face { font-family: 'Paperozi'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-8ExtraBold.woff2') format('woff2'); font-weight: 800; font-display: swap; }
-        @font-face { font-family: 'Paperozi'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-9Black.woff2') format('woff2'); font-weight: 900; font-display: swap; }
-
-        /* ================= 기본 스타일 ================= */
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Paperozi', sans-serif; }
-        body { background-color: #f4f7f9; color: #333; line-height: 1.6; padding: 40px 20px; }
-        .container { max-width: 1180px; margin: 0 auto; background: #fff; border-radius: 24px; box-shadow: 0 15px 40px rgba(0,0,0,0.06); padding: 50px; overflow: hidden; border-top: 6px solid #0056b3; }
-        h1, h2, h3 { color: #111; margin-bottom: 20px; letter-spacing: -0.5px; }
-        h2 { font-size: 28px; font-weight: 800; border-bottom: 2px solid #eaeaea; padding-bottom: 15px; margin-top: 60px; position: relative; }
-        h2::after { content: ''; position: absolute; left: 0; bottom: -2px; width: 60px; height: 2px; background: #0056b3; }
-        p { margin-bottom: 10px; font-weight: 400; color: #555; }
-        ul { list-style: none; }
-        
-        /* 토스트 알림 스타일 */
-        .toast-bubble { position: absolute; background: #333; color: #fff; padding: 10px 16px; border-radius: 10px; font-size: 13px; font-weight: bold; z-index: 10000; opacity: 0; pointer-events: none; white-space: nowrap; transform: translateX(-50%) translateY(10px); transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.68, -0.55, 0.265, 1.55); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-        .toast-bubble::after { content: ''; position: absolute; top: 100%; left: 50%; margin-left: -6px; border-width: 6px; border-style: solid; border-color: #333 transparent transparent transparent; }
-        .toast-bubble.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-        /* ================= 1. 제작 방식 선택 가이드 ================= */
-        .guide-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-top: 25px; }
-        .guide-card { background: #fcfcfc; padding: 30px; border-radius: 16px; border: 1px solid #eee; box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: all 0.3s; }
-        .guide-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.08); border-color: #e2e8f0; }
-        .guide-card h3 { font-size: 22px; color: #0056b3; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
-        .pro-con { margin-top: 15px; }
-        .pro-con strong { display: inline-block; margin-top: 15px; margin-bottom: 5px; font-size: 14px; padding: 4px 12px; border-radius: 20px; font-weight: 700; }
-        .pro-con strong:nth-of-type(1) { background: #e6fcf5; color: #0ca678; } 
-        .pro-con strong:nth-of-type(2) { background: #fff5f5; color: #e03131; } 
-        .pro-con li { position: relative; padding-left: 15px; font-size: 15px; color: #555; margin-bottom: 6px; word-break: keep-all;}
-        .pro-con li::before { content: '·'; position: absolute; left: 0; font-weight: bold; color: #888; }
-
-        /* ================= 2. 서비스 특장점 ================= */
-        .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 25px; align-items: start; }
-        .feature-box { background: #fff; padding: 20px 25px; border-radius: 12px; border: 1px solid #f0f0f0; border-left: 5px solid #0056b3; box-shadow: 0 4px 12px rgba(0,0,0,0.03); transition: 0.3s; height: 100%; display: flex; flex-direction: column; justify-content: center;}
-        .feature-box:hover { transform: translateX(5px); box-shadow: 0 6px 20px rgba(0,0,0,0.06); }
-        .feature-box h4 { font-size: 17px; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; color: #222; }
-        .feature-box p { font-size: 14px; color: #666; margin: 0; word-break: keep-all; }
-
-        /* ================= 3. 안내 멘트 & 4. 작업 순서 ================= */
-        .notice-box { background: linear-gradient(135deg, #e7f5ff 0%, #f1f8ff 100%); border-left: 4px solid #339af0; padding: 25px; border-radius: 12px; font-weight: 500; color: #1864ab; box-shadow: 0 4px 15px rgba(51, 154, 240, 0.1); margin-top: 25px; font-size: 15px; line-height: 1.7; word-break: keep-all;}
-        
-        .process-flow { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 30px; background: #f8f9fa; padding: 25px 20px; border-radius: 16px; border: 1px solid #eee; }
-        .process-step { background: #fff; color: #495057; padding: 12px 20px; border-radius: 30px; border: 1px solid #dee2e6; font-weight: 700; font-size: 14px; text-align: center; flex: 1; min-width: 110px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
-        .step-arrow { color: #adb5bd; font-size: 14px; }
-        .process-step:last-child { background: #0056b3; color: #fff; border-color: #0056b3; box-shadow: 0 4px 15px rgba(0,86,179,0.3); }
-
-        /* ================= 7. 기능 체험존 (8개 박스) ================= */
-        .demo-zone-container { margin-top: 25px; background: #fcfcfc; padding: 40px; border-radius: 20px; border: 1px solid #eee; box-shadow: inset 0 2px 10px rgba(0,0,0,0.02); }
-        .demo-zone-desc { color: #888; font-size: 15px; margin-bottom: 25px; text-align: center; }
-        .demo-zone-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
-        
-        .demo-box { background: #fff; border: 1px solid #eaeaea; border-radius: 16px; padding: 30px 20px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 160px; position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.03); transition: 0.3s; overflow: visible; }
-        .demo-box:hover { box-shadow: 0 10px 25px rgba(0,0,0,0.08); transform: translateY(-3px); }
-        .demo-box-title { position: absolute; top: 12px; left: 15px; font-size: 12px; font-weight: 800; color: #adb5bd; letter-spacing: 0.5px; }
-
-        .typing-effect { font-size: 16px; font-weight: bold; color: #0056b3; min-height: 24px; }
-        .typing-effect::after { content: '|'; animation: blink 1s step-end infinite; }
-        @keyframes blink { 50% { opacity: 0; } }
-        
-        .btn-neon { background: transparent; color: #e83e8c; border: 2px solid #e83e8c; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; position: relative; overflow: hidden; }
-        .btn-neon:hover { background: #e83e8c; color: #fff; box-shadow: 0 0 15px #e83e8c; }
-        
-        .counter-num { font-size: 32px; font-weight: 900; color: #20c997; font-family: 'Courier New', Courier, monospace; overflow: hidden; height: 44px; line-height: 44px; position: relative; display: inline-block; min-width: 80px; text-align: center; }
-        .counter-digit-track { display: inline-flex; flex-direction: column; transition: transform 0.18s cubic-bezier(0.25, 0.1, 0.25, 1); }
-        .counter-digit { display: block; height: 44px; line-height: 44px; }
-        
-        .toggle-switch { position: relative; display: inline-block; width: 60px; height: 34px; }
-        .toggle-switch input { opacity: 0; width: 0; height: 0; }
-        .toggle-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
-        .toggle-slider:before { position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .toggle-slider { background-color: #0056b3; }
-        input:checked + .toggle-slider:before { transform: translateX(26px); }
-        
-        .demo-accordion { width: 100%; text-align: left; background: #f8f9fa; border-radius: 8px; padding: 10px 15px; border: 1px solid #eee; cursor: pointer; }
-        .demo-accordion summary { font-weight: 700; font-size: 14px; outline: none; list-style: none; display: flex; justify-content: space-between; align-items: center; }
-        .demo-accordion summary::-webkit-details-marker { display: none; }
-        .demo-accordion summary::after { content: '+'; color: #0056b3; font-size: 18px; transition: 0.3s; }
-        .demo-accordion[open] summary::after { transform: rotate(45deg); }
-        .demo-accordion p { margin-top: 10px; font-size: 13px; color: #666; border-top: 1px dashed #ddd; padding-top: 10px; }
-        
-        /* 아코디언 오픈/클로즈 애니메이션 */
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fadeOutUp {
-            from { opacity: 1; transform: translateY(0); }
-            to { opacity: 0; transform: translateY(-10px); }
-        }
-        .accordion-body-inner { overflow: hidden; }
-        .accordion-body-inner.opening { animation: fadeInDown 0.3s ease-out forwards; }
-        .accordion-body-inner.closing { animation: fadeOutUp 0.25s ease-in forwards; }
-
-        .demo-btn { padding: 10px 18px; background: #343a40; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s; }
-        .demo-btn:hover { background: #495057; }
-        
-        .tooltip-wrap { position: relative; display: inline-block; cursor: help; }
-        .tooltip-text { visibility: hidden; width: 150px; background-color: #333; color: #fff; text-align: center; border-radius: 8px; padding: 10px; position: absolute; z-index: 100; bottom: 130%; left: 50%; margin-left: -75px; opacity: 0; transition: all 0.3s; font-size: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-        .tooltip-text::after { content: ""; position: absolute; top: 100%; left: 50%; margin-left: -5px; border-width: 5px; border-style: solid; border-color: #333 transparent transparent transparent; }
-        .tooltip-wrap:hover .tooltip-text { visibility: visible; opacity: 1; bottom: 140%; }
-
-        .skeleton-box { width: 100%; height: 40px; border-radius: 8px; background: linear-gradient(90deg, #e9ecef 25%, #f8f9fa 50%, #e9ecef 75%); background-size: 200% 100%; animation: loading 1.5s infinite; }
-        @keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-
-        /* ================= 5. 포트폴리오 ================= */
-        .portfolio-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; margin-top: 25px; }
-        .portfolio-item { background: #fff; border: 1px solid #eee; border-radius: 16px; overflow: hidden; cursor: pointer; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: 0 5px 15px rgba(0,0,0,0.03); display: flex; flex-direction: column;}
-        .portfolio-item:hover { box-shadow: 0 15px 30px rgba(0,0,0,0.1); transform: translateY(-8px); border-color: #ddd; }
-        .portfolio-img-wrapper { width: 100%; height: 220px; overflow: hidden; background: #f8f9fa; display: flex; align-items: center; justify-content: center; position: relative; }
-        .portfolio-img-wrapper::after { content: '\f00e  크게 보기'; font-family: "Font Awesome 6 Free", 'Paperozi', sans-serif; font-weight: 900; position: absolute; inset: 0; background: rgba(0,86,179,0.7); color: white; display: flex; align-items: center; justify-content: center; opacity: 0; transition: 0.3s; font-size: 16px; }
-        .portfolio-item:hover .portfolio-img-wrapper::after { opacity: 1; }
-        .portfolio-img-wrapper img { width: 100%; height: 100%; object-fit: cover; transition: 0.3s; }
-        .portfolio-item:hover .portfolio-img-wrapper img { transform: scale(1.05); }
-        .portfolio-info { padding: 20px; flex: 1; display: flex; flex-direction: column;}
-        .portfolio-info h4 { font-size: 17px; margin-bottom: 8px; color: #222; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .portfolio-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
-        .portfolio-tags span { font-size: 11px; background: #f1f3f5; color: #495057; padding: 3px 8px; border-radius: 4px; font-weight: 600; }
-        .portfolio-info p { font-size: 13px; color: #777; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 12px; }
-        .portfolio-price { margin-top: auto; font-size: 14px; font-weight: 800; color: #0056b3; background: #e7f5ff; display: inline-block; padding: 6px 12px; border-radius: 8px; align-self: flex-start;}
-        
-        .pagination { display: flex; justify-content: center; align-items: center; margin-top: 40px; gap: 10px; }
-        .page-btn { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border: 1px solid #ddd; background: #fff; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 15px; transition: 0.2s; color: #555; }
-        .page-btn:hover, .page-btn.active { background: #0056b3; color: #fff; border-color: #0056b3; box-shadow: 0 4px 10px rgba(0,86,179,0.2); }
-
-        .modal { display: none; position: absolute; z-index: 999; left: 0; top: 0; width: 100%; height: 100%; background-color: transparent; backdrop-filter: none; justify-content: center; align-items: flex-start; padding: 0 20px; pointer-events: none; }
-        .modal-content { background: #fff; border-radius: 20px; max-width: 900px; width: 100%; max-height: 85vh; overflow-y: auto; position: relative; padding: 30px; box-shadow: 0 15px 40px rgba(0,0,0,0.15); border: 1px solid #ddd; pointer-events: auto; transition: margin-top 0.1s ease-out; margin-bottom: 40px; }
-        .close-modal { position: absolute; top: 20px; right: 25px; font-size: 35px; font-weight: 300; color: #888; cursor: pointer; z-index: 10; transition: 0.2s; }
-        .close-modal:hover { color: #111; transform: rotate(90deg); }
-        .modal-img-container { width: 100%; text-align: center; margin-bottom: 25px; background: #f8f9fa; border-radius: 12px; padding: 10px; border: 1px solid #eee; }
-        .modal-img-container img { max-width: 100%; height: auto; border-radius: 8px; object-fit: contain; display: block; margin-bottom: 15px; }
-        .modal-img-container img:last-child { margin-bottom: 0; }
-        .modal-details h3 { font-size: 26px; margin-bottom: 15px; color: #111; }
-        .modal-details .meta { display: flex; gap: 10px; font-size: 14px; color: #444; margin-bottom: 20px; flex-wrap: wrap; }
-        .modal-details .meta span { background: #f1f3f5; border: 1px solid #e9ecef; padding: 6px 12px; border-radius: 6px; font-weight: 600; }
-        .modal-details .meta-tags { margin-top: -10px; margin-bottom: 20px; }
-        .modal-details .meta-tags span { background: #e7f5ff; color: #0056b3; border: none; }
-
-        /* ================= 6 & 8. 견적 계산기 및 가격표 ================= */
-        .calc-container { display: flex; flex-direction: column; gap: 40px; margin-top: 25px; } 
-        
-        .calc-category { margin-bottom: 25px; background: #fff; border: 1px solid #eee; border-radius: 16px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
-        .calc-category h4 { font-size: 19px; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #f0f0f0; color: #222; }
-        
-        .calc-item-wrapper { margin-bottom: 10px; }
-        .calc-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: #f8f9fa; border-radius: 10px; border: 1px solid #eee; transition: 0.2s; }
-        .calc-item.has-qty { border-radius: 10px 10px 0 0; border-bottom: none; background: #f1f3f5; }
-        .calc-item:hover { background: #f1f3f5; border-color: #dee2e6; }
-        .calc-item label { flex: 1; cursor: pointer; font-weight: 500; font-size: 15px; display: flex; align-items: center; gap: 12px; color: #333; }
-        .calc-item input[type="checkbox"] { transform: scale(1.3); cursor: pointer; accent-color: #0056b3; flex-shrink: 0; }
-        .item-price { font-weight: 800; color: #0056b3; font-size: 15px; white-space: nowrap; }
-
-        /* ★ 옵션 마우스 추적 툴팁 */
-        .calc-item-label-wrap { display: flex; align-items: center; gap: 6px; flex: 1; min-width: 0; }
-        .calc-item-name { flex: 1; }
-        .calc-item[data-desc] { cursor: default; }
-        #calcTooltip { position: fixed; z-index: 9999; background: #1a1e23; color: #e9ecef; font-size: 13px; font-weight: 400; line-height: 1.7; padding: 10px 14px; border-radius: 10px; white-space: pre-wrap; word-break: keep-all; max-width: 280px; pointer-events: none; opacity: 0; transition: opacity 0.15s ease; box-shadow: 0 8px 24px rgba(0,0,0,0.3); font-family: 'Paperozi', sans-serif; }
-
-        .qty-dropdown { display: none; padding: 15px; background: #fff; border: 1px solid #dee2e6; border-top: 1px dashed #ccc; border-radius: 0 0 10px 10px; text-align: right; box-shadow: inset 0 2px 5px rgba(0,0,0,0.02); }
-        .qty-dropdown.show { display: flex; justify-content: space-between; align-items: center; animation: slideDown 0.3s ease; }
-        @keyframes slideDown { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
-        .qty-dropdown input[type="number"] { width: 80px; padding: 8px; border: 1px solid #ccc; border-radius: 6px; text-align: center; font-weight: bold; outline: none; transition: 0.2s; font-size: 15px; }
-        .qty-dropdown input[type="number"]:focus { border-color: #0056b3; box-shadow: 0 0 0 3px rgba(0,86,179,0.1); }
-
-        .calc-summary { background: #1a1e23; color: #fff; padding: 35px; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.15); border: 1px solid #2c3238; }
-        .calc-summary-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid #3c424a; padding-bottom: 15px; margin-bottom: 20px; flex-wrap: wrap; gap:10px; }
-        .calc-summary-header h3 { color: white; margin: 0; border: none; font-size: 22px; }
-        .total-price-wrap { text-align: right; }
-        .total-price-wrap span { font-size: 14px; color: #8ba1b7; display: block; margin-bottom: 5px; }
-        .total-price { font-size: 32px; font-weight: 900; color: #ffd43b; margin: 0; line-height: 1; }
-        
-        .terms-overlay { position: relative; background: rgba(255,255,255,0.05); padding: 25px; border-radius: 12px; margin-bottom: 25px; border: 1px solid #3c424a; text-align: center; }
-        .terms-overlay.locked .lock-msg { display: block; color: #ffc107; font-size: 14px; font-weight: bold; margin-bottom: 15px; animation: pulse 2s infinite; }
-        .lock-msg { display: none; }
-        @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
-
-        .terms-check { font-size: 15px; position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 15px; }
-        .terms-link-btn { display: inline-block; background: #339af0; color: white !important; padding: 12px 25px; border-radius: 30px; font-weight: 800; text-decoration: none !important; box-shadow: 0 4px 15px rgba(51, 154, 240, 0.4); transition: 0.3s; font-size: 16px; z-index: 10; position: relative; }
-        .terms-link-btn:hover { background: #228be6; transform: translateY(-2px); }
-        
-        .terms-checkbox-wrap { display: flex; align-items: center; justify-content: center; gap: 12px; cursor: pointer; color: #e9ecef; font-weight: bold; background: rgba(0,0,0,0.2); padding: 15px 25px; border-radius: 10px; width: 100%; border: 1px dashed #555; transition: 0.3s; }
-        .terms-overlay.locked .terms-checkbox-wrap { opacity: 0.3; cursor: not-allowed; }
-        .terms-check input[type="checkbox"] { transform: scale(1.5); accent-color: #339af0; }
-
-        .selected-list-container { background: #23282e; border-radius: 12px; padding: 20px; margin-bottom: 25px; border: 1px solid #333940; }
-        .selected-list-container h5 { font-size: 14px; color: #8ba1b7; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed #3c424a; }
-        .selected-list { font-size: 14px; color: #ced4da; min-height: 20px; }
-        .selected-list li { display: flex; justify-content: space-between; margin-bottom: 10px; color: #f8f9fa; font-weight: 500; word-break: keep-all; gap: 10px; }
-        .selected-list li span:last-child { color: #ffd43b; font-weight: 700; white-space: nowrap; }
-        
-        .calc-btns { display: flex; gap: 15px; }
-        .calc-btns button { flex: 1; padding: 18px; border: none; border-radius: 12px; font-weight: 800; font-size: 16px; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .btn-copy { background: #0056b3; color: white; opacity: 0.4; cursor: not-allowed; }
-        .btn-copy.active { opacity: 1; cursor: pointer; box-shadow: 0 8px 20px rgba(0,86,179,0.4); }
-        .btn-copy.active:hover { background: #004494; transform: translateY(-3px); }
-        .btn-reset { background: #3c424a; color: #fff; }
-        .btn-reset:hover { background: #4d555e; }
-
-        /* 문의양식 공통 디자인 */
-        .inquiry-form-container { background: #fff; border: 1px solid #eee; border-radius: 16px; padding: 25px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
-        .inquiry-form-container h4 { font-size: 18px; margin-bottom: 20px; color: #222; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; }
-        .form-group { margin-bottom: 15px; }
-        .form-group:last-child { margin-bottom: 0; }
-        .form-group label { display: block; font-weight: bold; margin-bottom: 8px; font-size: 14px; color: #333; }
-        .form-control { width: 100%; box-sizing: border-box; padding: 10px; border-radius: 8px; border: 1px solid #ddd; font-family: 'Paperozi', sans-serif; resize: none; overflow-y: auto; }
-        .form-control:focus { outline: none; border-color: #0056b3; box-shadow: 0 0 0 3px rgba(0,86,179,0.1); }
-        .color-picker-wrap { display: flex; align-items: center; gap: 5px; margin-bottom: 5px; }
-
-        .inquiryColor::-webkit-color-swatch-wrapper { padding: 0; }
-        .inquiryColor::-webkit-color-swatch { border: none; border-radius: 6px; }
-        .inquiryColor::-moz-color-swatch { border: none; border-radius: 6px; }
-
-        /* ★ 이미지 첨부 영역 */
-        .ref-image-upload-area { border: 2px dashed #dee2e6; border-radius: 10px; padding: 18px; cursor: pointer; text-align: center; transition: border-color 0.2s, background 0.2s; background: #f8f9fa; margin-top: 8px; }
-        .ref-image-upload-area:hover { border-color: #0056b3; background: #e7f5ff; }
-        .ref-image-upload-area.dragover { border-color: #0056b3; background: #dbeafe; }
-        .ref-image-upload-area p { color: #868e96; font-size: 13px; margin: 0; pointer-events: none; }
-        .ref-image-upload-area i { font-size: 22px; color: #adb5bd; margin-bottom: 6px; display: block; pointer-events: none; }
-        .ref-image-preview-list { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
-        .ref-image-thumb { position: relative; width: 80px; height: 80px; border-radius: 8px; overflow: hidden; border: 1px solid #dee2e6; background: #f1f3f5; flex-shrink: 0; }
-        .ref-image-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-        .ref-image-thumb .del-img { position: absolute; top: 2px; right: 2px; background: rgba(0,0,0,0.55); color: #fff; border: none; border-radius: 50%; width: 18px; height: 18px; font-size: 11px; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; }
-        .ref-image-thumb .del-img:hover { background: #e03131; }
-
-        /* ================= ★ 이벤트 선택 UI ================= */
-        .event-select-container { margin-top: 8px; }
-        .event-loading { color: #aaa; font-size: 13px; padding: 10px 0; }
-
-        /* 이벤트 없음 안내 */
-        .event-none-msg { font-size: 13px; color: #aaa; padding: 10px 12px; background: #f8f9fa; border-radius: 8px; border: 1px dashed #ddd; }
-
-        /* 이벤트 카드 */
-        .event-card { position: relative; border: 2px solid #e9ecef; border-radius: 12px; padding: 14px 16px; margin-bottom: 10px; cursor: pointer; transition: border-color 0.2s, background 0.2s, box-shadow 0.2s; background: #fff; display: flex; align-items: flex-start; gap: 12px; }
-        .event-card:hover { border-color: #339af0; background: #f0f8ff; }
-        .event-card.selected { border-color: #0056b3; background: #e7f5ff; box-shadow: 0 0 0 3px rgba(0,86,179,0.12); }
-        .event-card.unavailable { opacity: 0.45; cursor: not-allowed; pointer-events: none; }
-
-        /* ★ 최대 할인 이벤트 강조 스타일 */
-        .event-card.best-deal {
-            border-color: #f59f00;
-            background: #fff9db;
-            box-shadow: 0 0 0 2px rgba(245,159,0,0.25);
-            animation: bestDealPulse 2.5s ease-in-out infinite;
-        }
-        .event-card.best-deal:hover { border-color: #e67700; background: #fff3bf; }
-        .event-card.best-deal.selected { border-color: #f59f00; background: #fff3bf; box-shadow: 0 0 0 3px rgba(245,159,0,0.35); animation: none; }
-        @keyframes bestDealPulse {
-            0%, 100% { box-shadow: 0 0 0 2px rgba(245,159,0,0.2); }
-            50% { box-shadow: 0 0 0 4px rgba(245,159,0,0.45); }
-        }
-        .best-deal-badge {
-            position: absolute;
-            top: -1px;
-            right: 12px;
-            background: linear-gradient(135deg, #f59f00, #e67700);
-            color: #fff;
-            font-size: 11px;
-            font-weight: 900;
-            padding: 3px 10px;
-            border-radius: 0 0 8px 8px;
-            letter-spacing: 0.3px;
-            box-shadow: 0 2px 6px rgba(245,159,0,0.4);
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .event-card input[type="radio"] { margin-top: 3px; accent-color: #0056b3; transform: scale(1.2); flex-shrink: 0; cursor: pointer; }
-        .event-card-body { flex: 1; min-width: 0; }
-        .event-card-title { font-size: 15px; font-weight: 800; color: #111; margin-bottom: 4px; }
-        .event-card-desc { font-size: 13px; color: #555; line-height: 1.5; }
-        .event-card-desc .event-badge { display: inline-block; background: #ffe066; color: #7c5a00; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 800; margin-right: 4px; }
-        .event-card-desc .event-cond { color: #888; font-size: 12px; margin-top: 3px; }
-        .event-card-deadline { position: absolute; top: 12px; right: 14px; font-size: 11px; font-weight: 700; color: #868e96; background: #f1f3f5; padding: 2px 8px; border-radius: 20px; }
-
-        /* best-deal일 때 마감일 배지 위치 조정 (배지가 위에 생겼으므로) */
-        .event-card.best-deal .event-card-deadline { top: 30px; }
-
-        /* 이벤트 없음 라디오 카드 */
-        .event-card.event-none-card { border-style: dashed; }
-
-        /* 견적 요약 이벤트 할인 표시 */
-        .discount-row { display: flex; justify-content: space-between; margin-bottom: 10px; color: #f8f9fa; font-weight: 500; gap: 10px; }
-        .discount-row span:last-child { color: #63e6be; font-weight: 700; white-space: nowrap; }
-        .discount-divider { border: none; border-top: 1px dashed #3c424a; margin: 8px 0 12px; }
-
-        /* ================= ★ 오마카세 안내 멘트 ================= */
-        .omakase-notice {
-            display: none;
-            background: linear-gradient(135deg, #fff9db 0%, #fffbe8 100%);
-            border-left: 4px solid #f59f00;
-            border-radius: 12px;
-            padding: 16px 20px;
-            margin-bottom: 20px;
-            font-size: 14px;
-            font-weight: 500;
-            color: #7c5a00;
-            line-height: 1.7;
-            word-break: keep-all;
-            box-shadow: 0 4px 15px rgba(245,159,0,0.12);
-            animation: fadeInDown 0.3s ease-out;
-        }
-        .omakase-notice.show { display: block; }
-        .omakase-notice strong { font-weight: 800; }
-
-        /* ================= 7. 안내사항 ================= */
-        .terms-accordion { width: 100%; background: #fcfcfc; border: 1px solid #eee; border-radius: 12px; margin-bottom: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); overflow: hidden; }
-        .terms-accordion summary { font-weight: 700; font-size: 15px; color: #222; outline: none; list-style: none; display: flex; justify-content: space-between; align-items: center; padding: 18px 22px; cursor: pointer; gap: 10px; }
-        .terms-accordion summary::-webkit-details-marker { display: none; }
-        .terms-accordion summary i { color: #0056b3; width: 18px; text-align: center; }
-        .terms-accordion summary::after { content: '+'; color: #0056b3; font-size: 20px; font-weight: 300; transition: 0.3s; margin-left: auto; flex-shrink: 0; }
-        .terms-accordion[open] summary::after { transform: rotate(45deg); }
-        .terms-accordion[open] summary { border-bottom: 1px solid #eee; background: #f8f9fa; }
-        .terms-accordion-body { padding: 20px 22px; }
-        .terms-accordion-body p { font-size: 14px; color: #555; margin-bottom: 8px; word-break: keep-all; line-height: 1.7; }
-        .terms-accordion-body p:last-child { margin-bottom: 0; }
-        .terms-list { list-style: none; padding: 0; }
-        .terms-list li { position: relative; padding-left: 16px; font-size: 14px; color: #555; margin-bottom: 8px; word-break: keep-all; line-height: 1.7; }
-        .terms-list li::before { content: '·'; position: absolute; left: 0; font-weight: bold; color: #0056b3; }
-
-        @media (max-width: 1024px) {
-            .demo-zone-grid { grid-template-columns: repeat(2, 1fr); }
-            .portfolio-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-        @media (max-width: 768px) {
-            .guide-grid, .feature-grid { grid-template-columns: 1fr; }
-            .feature-grid > div { margin-top: 0; }
-            .feature-grid > div + div { margin-top: 30px; }
-            .calc-summary { padding: 20px; }
-            .calc-btns { flex-direction: column; }
-            .process-step { min-width: 45%; }
-            .step-arrow { display: none; }
-        }
-        @media (max-width: 480px) {
-            body { padding: 20px 10px; }
-            .container { padding: 30px 20px; border-radius: 16px; }
-            .demo-zone-grid { grid-template-columns: 1fr; }
-            .portfolio-grid { grid-template-columns: 1fr; }
-            .total-price { font-size: 26px; }
-            .process-step { min-width: 100%; }
-            .calc-item { flex-direction: column; align-items: flex-start; gap: 10px; }
-            .item-price { align-self: flex-end; }
-            .color-picker-wrap { flex-wrap: wrap; }
-        }
-    </style>
-</head>
-<body>
-
-<!-- ★ 마우스 추적 툴팁 -->
-<div id="calcTooltip"></div>
-
-<div class="container">
-
-    <h2 id="guide-sec">1. 제작 방식 선택 가이드</h2>
-    <div class="guide-grid">
-        <div class="guide-card">
-            <h3><i class="fa-brands fa-html5"></i> A. 아트머그 기본 HTML</h3>
-            <div class="pro-con">
-                <strong>[장점]</strong>
-                <ul>
-                    <li>모바일 최적화 완벽 대응</li>
-                    <li>렉이나 로딩 지연 전혀 없음</li>
-                    <li>플랫폼 내 오류 발생 제로</li>
-                </ul>
-                <strong>[단점]</strong>
-                <ul>
-                    <li>디자인 일부 제한</li>
-                    <li>포트폴리오 등 내용 수정 시 직접 코드를 교체해야 함</li>
-                </ul>
-            </div>
+    <div class="receipt-machine">
+        <div class="machine-top">
+            <span class="machine-title">ARTIST 쏘주</span>
+            <div class="machine-light"></div>
         </div>
-        <div class="guide-card">
-            <h3><i class="fa-solid fa-code"></i> B. iframe 임베드 방식</h3>
-            <div class="pro-con">
-                <strong>[장점]</strong>
-                <ul>
-                    <li>포트폴리오 실시간 업데이트</li>
-                    <li>재의뢰 시 구매자 수정 불필요</li>
-                    <li>제한 적은 디자인</li>
-                </ul>
-                <strong>[단점]</strong>
-                <ul>
-                    <li>네트워크 상태에 따른 로딩 발생</li>
-                </ul>
-            </div>
-        </div>
-    </div>
 
-    <h2 id="feature-sec">2. 서비스 특장점 상세</h2>
-    <div class="feature-grid">
-        <div>
-            <h3 style="font-size: 20px; color: #333; margin-bottom: 15px;">A. 핵심 차별점</h3>
-            <div style="display:flex; flex-direction:column; gap:12px; height: 100%;">
-                <div class="feature-box">
-                    <h4>✅ PC · 모바일 완전 대응 UI 설계</h4>
-                    <p>화면 크기에 상관없이 정렬과 가독성 유지</p>
-                </div>
-                <div class="feature-box">
-                    <h4>✅ 플랫폼 제한 고려한 UX 최적화</h4>
-                    <p>아트머그 제약 내 최적의 인터페이스 구현</p>
-                </div>
-                <div class="feature-box">
-                    <h4>✅ 터치 인터페이스 기준 레이아웃</h4>
-                    <p>모바일에서도 클릭 편리한 버튼 배치</p>
-                </div>
-                <div class="feature-box">
-                    <h4>✅ 모바일 깨짐 방지 설계</h4>
-                    <p>고질적인 레이아웃 오류 원천 차단</p>
-                </div>
-            </div>
-        </div>
-        <div>
-            <h3 style="font-size: 20px; color: #333; margin-bottom: 15px;">B. 제작 능력 강조</h3>
-            <div style="display:flex; flex-direction:column; gap:12px; height: 100%;">
-                <div class="feature-box" style="border-left-color:#ffc107;">
-                    <h4>✨ 레퍼런스 기반 1:1 커스텀 제작</h4>
-                    <p>참고하고 싶은 디자인 그대로 구현 가능</p>
-                </div>
-                <div class="feature-box" style="border-left-color:#ffc107;">
-                    <h4>✨ 디자인 스타일 제한 없음</h4>
-                    <p>미니멀 / 카드형 / 브랜드형 모두 가능</p>
-                </div>
-                <div class="feature-box" style="border-left-color:#ffc107;">
-                    <h4>✨ UI 설계 중심의 고도화 작업</h4>
-                    <p>단순 이미지가 아닌 탄탄한 구조적 설계</p>
-                </div>
-                <div class="feature-box" style="border-left-color:#ffc107;">
-                    <h4>✨ 복잡한 인터랙션 구현 가능</h4>
-                    <p>고난도 UI 구성도 완벽하게 지원</p>
-                </div>
-            </div>
-        </div>
-    </div>
+        <div class="receipt-slot">
+            <div class="receipt-paper">
+                <div class="receipt-noise"></div>
 
-    <h2 id="notice-sec">3. 안내 및 작업 순서</h2>
-    <div class="notice-box">
-        <i class="fa-solid fa-circle-info" style="font-size: 18px; margin-right: 5px;"></i> 작업은 예정된 날짜에 시작되어 <b>최대 7일 이내</b> 완료되나, <b>일반적으로 4일 이내</b>에 빠르게 완성됩니다.<br>
-        무상 유지보수(A/S)는 <b>평생</b> 지원됩니다.
-    </div>
-    
-    <div class="process-flow">
-        <div class="process-step">문의 및 상담</div>
-        <i class="fa-solid fa-chevron-right step-arrow"></i>
-        <div class="process-step">입금 확인</div>
-        <i class="fa-solid fa-chevron-right step-arrow"></i>
-        <div class="process-step">방향 설정</div>
-        <i class="fa-solid fa-chevron-right step-arrow"></i>
-        <div class="process-step">시안 제작</div>
-        <i class="fa-solid fa-chevron-right step-arrow"></i>
-        <div class="process-step">수정 및 보완</div>
-        <i class="fa-solid fa-chevron-right step-arrow"></i>
-        <div class="process-step">최종 수령 <i class="fa-solid fa-check"></i></div>
-    </div>
+                <div class="receipt-content">
+                    <div class="receipt-mini">THANK YOU</div>
 
-    <h2 id="demo-sec" style="margin-top: 70px;">✨ 상세페이지 기능 체험존</h2>
-    <div class="demo-zone-container">
-        <p class="demo-zone-desc">상세페이지에 적용할 수 있는 다양한 동적 기능들을 각각 테스트해보세요!</p>
-        <div class="demo-zone-grid">
-            <div class="demo-box">
-                <div class="demo-box-title">1. 타이핑 효과</div>
-                <div id="typingText" class="typing-effect"></div>
-            </div>
-            
-            <div class="demo-box">
-                <div class="demo-box-title">2. 버튼 애니메이션</div>
-                <button class="btn-neon">Neon Hover</button>
-            </div>
-            
-            <div class="demo-box">
-                <div class="demo-box-title">3. 숫자 카운터</div>
-                <div class="counter-num" id="loopCounter"></div>
-            </div>
-            
-            <div class="demo-box">
-                <div class="demo-box-title">4. 스위치 토글</div>
-                <label class="toggle-switch">
-                    <input type="checkbox">
-                    <span class="toggle-slider"></span>
-                </label>
-            </div>
-            
-            <div class="demo-box" style="justify-content: flex-start; padding-top: 45px;">
-                <div class="demo-box-title">5. FAQ 아코디언</div>
-                <details class="demo-accordion" ontoggle="sendHeight()">
-                    <summary>질문을 클릭해보세요</summary>
-                    <div class="accordion-body-inner">
-                        <p>깔끔하게 긴 텍스트를 숨겨두고 원할 때만 펼쳐볼 수 있습니다.</p>
+                    <div class="receipt-big">
+                        리뷰 이벤트
                     </div>
-                </details>
-            </div>
-            
-            <div class="demo-box">
-                <div class="demo-box-title">6. 정보 툴팁</div>
-                <div class="tooltip-wrap">
-                    <button class="demo-btn">마우스를 올려보세요</button>
-                    <span class="tooltip-text">특정 단어나 이미지에 마우스를 올리면 부가 설명이 팝업됩니다!</span>
-                </div>
-            </div>
-            
-            <div class="demo-box">
-                <div class="demo-box-title">7. 로딩 스켈레톤</div>
-                <div class="skeleton-box"></div>
-                <div class="skeleton-box" style="height:15px; width:70%; margin-top:10px;"></div>
-            </div>
-            
-            <div class="demo-box" id="themePreview" style="transition: background 0.5s, color 0.5s;">
-                <div class="demo-box-title" id="themeTitle">8. 컬러 테마 (Light)</div>
-                <button class="demo-btn" onclick="toggleTheme()">다크 모드 전환</button>
-            </div>
-        </div>
-    </div>
 
-    <h2 id="portfolio-sec" style="margin-top: 70px;">5. 포트폴리오</h2>
-    <p style="font-size: 14px; color: #888; margin-top: -10px; margin-bottom: 15px;">* 개인정보 보호를 위해 자세한 가격은 공개하지 않습니다.</p>
-    <div class="portfolio-grid" id="portfolioGrid">
-        <p style="text-align:center; width:100%; grid-column: 1 / -1; padding: 40px; color: #888;">포트폴리오 데이터를 불러오는 중입니다...</p>
-    </div>
-    <div class="pagination" id="portfolioPagination"></div>
-
-    <h2 id="calc-sec" style="margin-top: 70px;">6. 실시간 견적 계산기</h2>
-    <div class="calc-container">
-        
-        <div class="calc-options" id="calcOptions">
-            <div style="padding: 30px; text-align: center; color: #888; background: #f8f9fa; border-radius: 12px;">가격표 데이터를 불러오는 중입니다...</div>
-        </div>
-        
-        <div class="inquiry-form-container">
-            <h4><i class="fa-solid fa-pen-to-square"></i> 문의 양식 작성</h4>
-
-            <!-- ★ 오마카세 안내 멘트 -->
-            <div class="omakase-notice" id="omakaseNotice">
-                <i class="fa-solid fa-circle-info" style="margin-right: 6px;"></i>
-                <strong>오마카세 선택 시 안내</strong><br>
-                오마카세는 <strong>페이지 링크</strong>와 <strong>상세페이지 구성</strong> 이외의 내용은 별도로 입력하지 않으셔도 됩니다. 나머지는 작업자가 직접 기획하여 제안드립니다
-            </div>
-            
-            <div class="form-group">
-                <label>1. 제작 방식 선택</label>
-                <select id="inquiryMethod" class="form-control">
-                    <option value="">선택해주세요</option>
-                    <option value="기본 HTML">기본 HTML</option>
-                    <option value="iframe 임베드">iframe 임베드</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label>2. 페이지 링크</label>
-                <input type="url" id="inquiryPageLink" class="form-control" placeholder="작업할 페이지의 링크를 입력해주세요. (예: https://artmug.kr/...)">
-            </div>
-
-            <div class="form-group">
-                <label>3. 디자인 레퍼런스</label>
-                <textarea id="inquiryReference" class="form-control" rows="2" placeholder="참고할 만한 디자인 링크나 설명을 적어주세요."></textarea>
-                <div class="ref-image-upload-area" id="refImageDropArea" onclick="document.getElementById('refImageInput').click()" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
-                    <i class="fa-solid fa-image"></i>
-                    <p>이미지를 클릭하거나 드래그해서 첨부해주세요 (여러 장 가능)</p>
-                </div>
-                <input type="file" id="refImageInput" accept="image/*" multiple style="display:none;" onchange="handleImageSelect(event)">
-                <div class="ref-image-preview-list" id="refImagePreviewList"></div>
-            </div>
-
-            <div class="form-group">
-                <label>4. 메인 색상 선택</label>
-                <div id="colorContainer" style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
-                    <div class="color-picker-wrap">
-                        <input type="color" class="inquiryColor" value="#0056b3" style="width:40px; height:40px; border:none; cursor:pointer; background:none;" oninput="syncColorInput(this, true)">
-                        <input type="text" class="inquiryColorHex form-control" value="#0056B3" maxlength="7" style="width:90px; text-transform:uppercase;" oninput="syncColorInput(this, false)">
+                    <div class="receipt-plus">
+                        1 + 1
                     </div>
-                    <button type="button" id="btnAddColor" onclick="addColor()" style="background:#f1f3f5; border:1px solid #ddd; border-radius:6px; padding:8px 12px; cursor:pointer; font-weight:bold; color:#555;">+ 색상 추가</button>
+
+                    <div class="receipt-desc">
+                        리뷰 작성 시<br>
+                        추가 작업 1개 무료 제공
+                    </div>
+
+                    <div class="receipt-barcode"></div>
                 </div>
-            </div>
-
-            <div class="form-group">
-                <label>5. 상세페이지 구성</label>
-                <textarea id="inquiryStructure" class="form-control" rows="2" placeholder="예: 소개 - 작업 순서 - 포트폴리오"></textarea>
-            </div>
-
-            <!-- ★ 이벤트 선택 -->
-            <div class="form-group" id="eventFormGroup">
-                <label>6. 이벤트 선택 <span style="font-size:12px; color:#868e96; font-weight:400;">(해당 이벤트가 있을 경우 선택해주세요)</span></label>
-                <div class="event-select-container" id="eventSelectContainer">
-                    <div class="event-loading"><i class="fa-solid fa-circle-notch fa-spin"></i> 이벤트 정보를 불러오는 중...</div>
-                </div>
-            </div>
-
-            <!-- ★ 맞춤 오마카세 선택 시 표시 -->
-            <div class="form-group" id="budgetGroup" style="display:none; overflow:hidden; transition: all 0.3s;">
-                <label>7. 예산 <span style="font-size:12px; color:#868e96; font-weight:400;">(맞춤 오마카세 선택 시)</span></label>
-                <input type="text" id="inquiryBudget" class="form-control" placeholder="예: 5만원 이하 / 10만원 내외 / 자유롭게 적어주세요">
-            </div>
-
-            <div class="form-group" id="etcGroup">
-                <label id="etcLabel">7. 기타 요청사항</label>
-                <textarea id="inquiryEtc" class="form-control" rows="3" placeholder="자유롭게 기재해주세요."></textarea>
-            </div>
-        </div>
-        
-        <div class="calc-summary">
-            <div class="calc-summary-header">
-                <h3><i class="fa-solid fa-calculator" style="color: #ffd43b; margin-right: 8px;"></i> 견적 요약</h3>
-                <div class="total-price-wrap">
-                    <span>예상 총액</span>
-                    <div class="total-price" id="totalPriceDisplay">0원</div>
-                </div>
-            </div>
-
-            <div id="termsOverlay" class="terms-overlay">
-                <div class="terms-check">
-                    <label class="terms-checkbox-wrap">
-                        <input type="checkbox" id="termsCheckbox">
-                        안내사항을 모두 확인하였으며, 이에 동의합니다.
-                    </label>
-                </div>
-            </div>
-
-            <div class="selected-list-container">
-                <h5>선택된 항목 상세 내역</h5>
-                <ul class="selected-list" id="selectedList">
-                    <li style="color:#6c757d; justify-content:center; padding: 10px 0;">선택된 항목이 없습니다.</li>
-                </ul>
-            </div>
-            
-            <div class="calc-btns">
-                <button class="btn-reset" onclick="resetCalc(this)"><i class="fa-solid fa-rotate-right"></i> 초기화</button>
-                <button class="btn-copy" id="btnCopy" onclick="copyEstimate(this)"><i class="fa-solid fa-copy"></i> 문의 내용 복사</button>
             </div>
         </div>
     </div>
-
-
-    <h2 id="terms-sec">7. 안내사항 및 이용 조건</h2>
-
-    <details class="terms-accordion" ontoggle="sendHeight()">
-        <summary><i class="fa-solid fa-circle-info"></i> 상담 시간 및 문의</summary>
-        <div class="terms-accordion-body"><div class="accordion-body-inner">
-            <p>상담 문의는 24시간 언제든 남겨주실 수 있습니다.</p>
-            <p>남겨주신 메시지를 확인하는 즉시 순차적으로 답변해 드리고 있습니다.</p>
-        </div></div>
-    </details>
-
-    <details class="terms-accordion" ontoggle="sendHeight()">
-        <summary><i class="fa-solid fa-copyright"></i> 저작권 및 소유권</summary>
-        <div class="terms-accordion-body"><div class="accordion-body-inner">
-            <p>본 상품을 통해 제작된 모든 결과물(디자인, 코드, 구조 등)에 대한 저작권은 <b>"대충닉넴임"</b>에게 귀속됩니다.</p>
-            <p>단, 구매자는 결과물을 본인의 서비스/페이지 내에서 사용하는 것에 한하여 이용 권한을 가집니다.</p>
-        </div></div>
-    </details>
-
-    <details class="terms-accordion" ontoggle="sendHeight()">
-        <summary><i class="fa-solid fa-ban"></i> 사용 범위 및 금지사항</summary>
-        <div class="terms-accordion-body"><div class="accordion-body-inner">
-            <p>구매자는 제공받은 작업물을 본인 페이지 내에서 자유롭게 수정 및 사용할 수 있습니다.</p>
-            <p style="color:#e03131; font-weight:700; margin-top:10px;">⚠️ 아래 행위는 엄격히 금지됩니다:</p>
-            <ul class="terms-list">
-                <li>제3자에게 양도, 판매, 재배포, 공유하는 행위</li>
-                <li>작업물을 기반으로 한 2차 상품 제작 및 상업적 재판매</li>
-            </ul>
-            <p style="color:#888; font-size:13px; margin-top:8px;">* 위반 시 서비스 이용 제한 및 법적 책임이 발생할 수 있습니다.</p>
-        </div></div>
-    </details>
-
-    <details class="terms-accordion" ontoggle="sendHeight()">
-        <summary><i class="fa-solid fa-images"></i> 포트폴리오 활용</summary>
-        <div class="terms-accordion-body"><div class="accordion-body-inner">
-            <p>제작된 작업물 및 작업 진행 가격은 <b>"대충닉넴임"</b>의 포트폴리오, 홍보, SNS 및 기타 채널에 활용될 수 있습니다.</p>
-            <p>단, 상세한 세부 가격 내역은 공개하지 않습니다.</p>
-        </div></div>
-    </details>
-
-    <details class="terms-accordion" ontoggle="sendHeight()">
-        <summary><i class="fa-solid fa-file-code"></i> 외부 자료 및 코드 책임 제한</summary>
-        <div class="terms-accordion-body"><div class="accordion-body-inner">
-            <p>클라이언트가 제공한 이미지, 텍스트, 코드 등 외부 자료에 대해 발생하는 저작권 문제, 라이선스 위반, 기타 법적 분쟁에 대해서 <b>"대충닉넴임"</b>은 책임을 지지 않습니다.</p>
-            <p>또한, 클라이언트가 요구한 폰트가 '웹사이트 사용(웹폰트)'이 허용되지 않은 라이선스일 경우 해당 폰트는 작업에 사용할 수 없습니다.</p>
-        </div></div>
-    </details>
-
-    <details class="terms-accordion" ontoggle="sendHeight()">
-        <summary><i class="fa-solid fa-triangle-exclamation"></i> 기존 코드 및 타 작업물 관련 면책</summary>
-        <div class="terms-accordion-body"><div class="accordion-body-inner">
-            <p>클라이언트가 전달한 기존 코드 또는 타 작업자의 작업물이 포함된 경우, 해당 부분에서 발생하는 오류, 충돌, 권리 문제 등에 대해서는 책임지지 않습니다.</p>
-        </div></div>
-    </details>
-
-    <details class="terms-accordion" ontoggle="sendHeight()">
-        <summary><i class="fa-regular fa-clock"></i> 작업 기간 및 피드백 지연</summary>
-        <div class="terms-accordion-body"><div class="accordion-body-inner">
-            <ul class="terms-list">
-                <li>기본 작업 기간은 최대 <b>7일</b>로 규정되어 있습니다.</li>
-                <li>클라이언트의 피드백이 정확히 <b>24시간</b> 동안 없을 경우, 해당 시점에서 작업은 종료 및 최종 확정된 것으로 간주합니다.</li>
-                <li>클라이언트의 답변 지연으로 인해 7일 마감일을 지키지 못한 경우 작업자에게는 귀책사유가 없으며, 이로 인해 진행하지 못한 수정이나 작업에 대해서는 추가 비용이 발생할 수 있습니다.</li>
-            </ul>
-        </div></div>
-    </details>
-
-    <details class="terms-accordion" ontoggle="sendHeight()">
-        <summary><i class="fa-solid fa-pen-ruler"></i> 작업 범위 및 수정</summary>
-        <div class="terms-accordion-body"><div class="accordion-body-inner">
-            <ul class="terms-list">
-                <li>작업 범위는 사전에 협의된 내용에 한정되며, 추가 요청은 별도의 비용이 발생할 수 있습니다.</li>
-                <li>기본 수정은 협의된 횟수 내에서 가능하며, 범위를 초과하는 수정은 추가 비용이 부과됩니다.</li>
-            </ul>
-        </div></div>
-    </details>
-
-    <details class="terms-accordion" ontoggle="sendHeight()">
-        <summary><i class="fa-solid fa-screwdriver-wrench"></i> 유지보수 및 A/S</summary>
-        <div class="terms-accordion-body"><div class="accordion-body-inner">
-            <ul class="terms-list">
-                <li>최종본 전달 후 작업자의 책임으로 판단되는 문제(기능 오류 등)에 대해서는 <b>평생 무상 수리</b>를 원칙으로 합니다.</li>
-                <li>새로운 기능 추가나 내용 변경 및 수정 요청은 추가 비용이 발생합니다.</li>
-            </ul>
-        </div></div>
-    </details>
-
-    <details class="terms-accordion" ontoggle="sendHeight()">
-        <summary><i class="fa-solid fa-folder-open"></i> 결과물 보관 및 재발송</summary>
-        <div class="terms-accordion-body"><div class="accordion-body-inner">
-            <ul class="terms-list">
-                <li>최종 파일은 가능한 한 오래 보관하나, 영구 보관을 보장하지 않습니다.</li>
-                <li>작업자의 보관 기간이 지나 폐기된 후 다시 요청하실 경우, 재제작에 따른 추가 비용이 발생합니다.</li>
-                <li>단, 작업 완료일로부터 <b>3개월</b>이 지나지 않은 시점에서는 파일 유실 시 무상으로 다시 제작하여 제공해 드립니다.</li>
-            </ul>
-        </div></div>
-    </details>
-
-    <details class="terms-accordion" ontoggle="sendHeight()">
-        <summary><i class="fa-solid fa-rotate-left"></i> 환불 및 취소</summary>
-        <div class="terms-accordion-body"><div class="accordion-body-inner">
-            <p>디지털 콘텐츠 특성상 작업이 시작된 이후에는 단순 변심에 의한 환불이 어렵습니다.</p>
-            <p>단, 작업 시작 전에는 <b>전액 환불</b>이 가능합니다.</p>
-        </div></div>
-    </details>
-
-    <details class="terms-accordion" ontoggle="sendHeight()">
-        <summary><i class="fa-solid fa-scale-balanced"></i> 책임 범위</summary>
-        <div class="terms-accordion-body"><div class="accordion-body-inner">
-            <p>결과물 사용으로 인해 발생하는 직접적/간접적 손해에 대해 <b>"대충닉넴임"</b>은 고의 또는 중대한 과실이 없는 한 책임을 지지 않습니다.</p>
-        </div></div>
-    </details>
 
 </div>
 
-<div id="portfolioModal" class="modal">
-    <div class="modal-content">
-        <span class="close-modal" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></span>
-        <div class="modal-img-container" id="modalImageContainer"></div>
-        <div class="modal-details" id="modalDetails"></div>
-    </div>
-</div>
-
-<script>
-// =================== 임베드용 변수 ===================
-let parentViewHeight = window.innerHeight;
-let iframeCenterY = window.innerHeight / 2;
-
-// =================== 자동 높이 조절 및 네비게이션 스크롤 수신 ===================
-function sendHeight() {
-    const container = document.querySelector('.container');
-    let height = container ? container.offsetHeight + 80 : document.documentElement.offsetHeight;
-    
-    const modal = document.getElementById('portfolioModal');
-    if (modal && modal.style.display === 'flex') {
-        const modalContent = modal.querySelector('.modal-content');
-        if (modalContent) {
-            const mt = parseFloat(modalContent.style.marginTop) || 0;
-            const modalBottom = mt + modalContent.offsetHeight + 40;
-            if (modalBottom > height) height = modalBottom;
-        }
-    }
-    window.parent.postMessage({ height: height }, '*');
+<style>
+.receipt-machine-wrap{
+    width:100%;
+    max-width:450px;
+    margin:60px auto;
+    display:flex;
+    justify-content:center;
+    font-family:'Pretendard',sans-serif;
 }
 
-window.addEventListener('load', sendHeight);
-window.addEventListener('resize', sendHeight);
-if (window.ResizeObserver) {
-    new ResizeObserver(sendHeight).observe(document.body);
+/* 기계 */
+.receipt-machine{
+    width:280px;
+    background:#2b2b2b;
+    border-radius:24px;
+    padding:22px 18px 0;
+    box-shadow:
+        inset 0 2px 0 rgba(255,255,255,.06),
+        0 12px 30px rgba(0,0,0,.25);
+    position:relative;
 }
 
-window.addEventListener('message', function(e) {
-    if (e.data && e.data.type === 'parentScroll') {
-        const rectTop = e.data.rectTop;
-        parentViewHeight = e.data.viewHeight;
-        iframeCenterY = (parentViewHeight / 2) - rectTop;
-        if (iframeCenterY < 0) iframeCenterY = 0;
-
-        const modal = document.getElementById('portfolioModal');
-        if (modal.style.display === 'flex') {
-            const modalContent = modal.querySelector('.modal-content');
-            if (modalContent) {
-                modalContent.style.marginTop = Math.max(20, iframeCenterY - (modalContent.offsetHeight / 2)) + 'px';
-                modalContent.style.maxHeight = (parentViewHeight * 0.85) + 'px';
-                setTimeout(sendHeight, 150); 
-            }
-        }
-    }
-    
-    if (e.data && e.data.type === 'requestOffset') {
-        const targetElement = document.getElementById(e.data.id);
-        if (targetElement) {
-            const offset = targetElement.offsetTop;
-            window.parent.postMessage({ type: 'returnOffset', offset: offset }, '*');
-        }
-    }
-});
-
-
-// =================== 아코디언 닫힘 애니메이션 처리 ===================
-function initAccordions() {
-    document.querySelectorAll('details.demo-accordion, details.terms-accordion').forEach(details => {
-        const summary = details.querySelector('summary');
-        summary.addEventListener('click', function(e) {
-            e.preventDefault();
-            const inner = details.querySelector('.accordion-body-inner');
-            if (!inner) { details.open = !details.open; sendHeight(); return; }
-
-            if (details.open) {
-                inner.classList.remove('opening');
-                inner.classList.add('closing');
-                inner.addEventListener('animationend', function handler() {
-                    inner.removeEventListener('animationend', handler);
-                    inner.classList.remove('closing');
-                    details.removeAttribute('open');
-                    setTimeout(sendHeight, 50);
-                });
-            } else {
-                details.open = true;
-                inner.classList.remove('closing');
-                inner.classList.add('opening');
-                inner.addEventListener('animationend', function handler() {
-                    inner.removeEventListener('animationend', handler);
-                    inner.classList.remove('opening');
-                    setTimeout(sendHeight, 50);
-                });
-            }
-        });
-    });
+/* 상단 */
+.machine-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:16px;
 }
 
-// =================== 토스트 팝업 ===================
-function showToast(msg, targetEl) {
-    if (!targetEl) return;
-
-    const existing = targetEl._toastEl;
-    if (existing) {
-        existing.remove();
-        if (existing._timeoutId) clearTimeout(existing._timeoutId);
-    }
-
-    const toast = document.createElement('div');
-    toast.className = 'toast-bubble';
-    toast.textContent = msg;
-    document.body.appendChild(toast);
-
-    function position() {
-        const rect = targetEl.getBoundingClientRect();
-        const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        toast.style.left = (rect.left + scrollLeft + rect.width / 2) + 'px';
-        toast.style.top = (rect.top + scrollTop - toast.offsetHeight - 12) + 'px';
-    }
-
-    position();
-    requestAnimationFrame(() => {
-        position();
-        toast.classList.add('show');
-    });
-
-    targetEl._toastEl = toast;
-    toast._timeoutId = setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => { toast.remove(); if (targetEl._toastEl === toast) targetEl._toastEl = null; }, 300);
-    }, 3000);
+.machine-title{
+    color:#f8f9fa;
+    font-size:20px;
+    font-weight:900;
+    letter-spacing:1px;
 }
 
-// =================== 숫자에 콤마 추가 ===================
-function formatPriceStr(str) {
-    if (!str && str !== 0) return '';
-    return str.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+.machine-light{
+    width:10px;
+    height:10px;
+    border-radius:50%;
+    background:#51cf66;
+    box-shadow:0 0 10px #51cf66;
+    animation:blink 1s infinite;
 }
 
-// =================== ★ 견적 옵션 마우스 추적 툴팁 ===================
-function initCalcTooltip() {
-    const tip = document.getElementById('calcTooltip');
-    let hideTimer = null;
-
-    document.addEventListener('mouseover', function(e) {
-        const item = e.target.closest('.calc-item[data-desc]');
-        if (!item) return;
-        clearTimeout(hideTimer);
-        tip.textContent = item.dataset.desc;
-        tip.style.opacity = '1';
-    });
-
-    document.addEventListener('mousemove', function(e) {
-        const item = e.target.closest('.calc-item[data-desc]');
-        if (!item) return;
-
-        const pad = 14;
-        const tw = tip.offsetWidth;
-        const th = tip.offsetHeight;
-        const vw = window.innerWidth;
-        const vh = window.innerHeight;
-
-        let x = e.clientX + pad;
-        let y = e.clientY + pad;
-
-        if (x + tw > vw - 8) x = e.clientX - tw - pad;
-        if (y + th > vh - 8) y = e.clientY - th - pad;
-
-        tip.style.left = x + 'px';
-        tip.style.top  = y + 'px';
-    });
-
-    document.addEventListener('mouseout', function(e) {
-        const item = e.target.closest('.calc-item[data-desc]');
-        if (!item) return;
-        if (item.contains(e.relatedTarget)) return;
-        hideTimer = setTimeout(() => { tip.style.opacity = '0'; }, 80);
-    });
+@keyframes blink{
+    0%,100%{opacity:1;}
+    50%{opacity:.3;}
 }
 
-// =================== 문의 양식 색상 처리 기능 ===================
-function syncColorInput(el, isPicker) {
-    const wrap = el.parentElement;
-    const picker = wrap.querySelector('.inquiryColor');
-    const hex = wrap.querySelector('.inquiryColorHex');
-    
-    if(isPicker) {
-        hex.value = picker.value.toUpperCase();
-    } else {
-        let val = hex.value;
-        if(!val.startsWith('#')) val = '#' + val;
-        val = val.replace(/[^#0-9a-fA-F]/g, '');
-        hex.value = val.toUpperCase();
-        if(/^#[0-9A-F]{6}$/i.test(val)) {
-            picker.value = val;
-        }
-    }
+/* 종이 나오는 슬롯 */
+.receipt-slot{
+    width:100%;
+    height:280px;
+    background:#111;
+    border-radius:18px 18px 0 0;
+    overflow:hidden;
+    position:relative;
+    display:flex;
+    justify-content:center;
 }
 
-function addColor() {
-    const container = document.getElementById('colorContainer');
-    const addBtn = document.getElementById('btnAddColor');
-    const wrap = document.createElement('div');
-    wrap.className = 'color-picker-wrap';
-    wrap.innerHTML = `
-        <input type="color" class="inquiryColor" value="#000000" style="width:40px; height:40px; border:none; cursor:pointer; background:none;" oninput="syncColorInput(this, true)">
-        <input type="text" class="inquiryColorHex form-control" value="#000000" maxlength="7" style="width:90px; text-transform:uppercase;" oninput="syncColorInput(this, false)">
-        <button type="button" onclick="this.parentElement.remove(); sendHeight();" style="color:#ff6b6b; background:none; border:none; font-size:18px; cursor:pointer;"><i class="fa-solid fa-circle-minus"></i></button>
-    `;
-    container.insertBefore(wrap, addBtn);
-    setTimeout(sendHeight, 100);
-}
-
-// =================== ★ 이미지 첨부 기능 ===================
-let refImages = [];
-
-function handleImageSelect(event) {
-    const files = Array.from(event.target.files);
-    addRefImages(files);
-    event.target.value = '';
-}
-
-function handleDragOver(event) {
-    event.preventDefault();
-    event.stopPropagation();
-    document.getElementById('refImageDropArea').classList.add('dragover');
-}
-
-function handleDragLeave(event) {
-    event.stopPropagation();
-    document.getElementById('refImageDropArea').classList.remove('dragover');
-}
-
-function handleDrop(event) {
-    event.preventDefault();
-    event.stopPropagation();
-    document.getElementById('refImageDropArea').classList.remove('dragover');
-    const files = Array.from(event.dataTransfer.files).filter(f => f.type.startsWith('image/'));
-    addRefImages(files);
-}
-
-function addRefImages(files) {
-    files.forEach(file => {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const entry = { file: file, dataUrl: e.target.result, name: file.name };
-            refImages.push(entry);
-            renderRefImagePreview();
-            setTimeout(sendHeight, 150);
-        };
-        reader.readAsDataURL(file);
-    });
-}
-
-function removeRefImage(index) {
-    refImages.splice(index, 1);
-    renderRefImagePreview();
-    setTimeout(sendHeight, 150);
-}
-
-function renderRefImagePreview() {
-    const list = document.getElementById('refImagePreviewList');
-    list.innerHTML = '';
-    refImages.forEach((img, idx) => {
-        const thumb = document.createElement('div');
-        thumb.className = 'ref-image-thumb';
-        thumb.innerHTML = `
-            <img src="${img.dataUrl}" alt="${img.name}">
-            <button class="del-img" onclick="removeRefImage(${idx})" title="삭제"><i class="fa-solid fa-xmark"></i></button>
-        `;
-        list.appendChild(thumb);
-    });
-}
-
-// =================== 체험존 기능 스크립트 ===================
-const typingText = "원하는 문구를 강조해보세요!";
-let typeIndex = 0;
-let isDeleting = false;
-function typeWriter() {
-    const el = document.getElementById("typingText");
-    if (!el) return;
-    const current = typingText.substring(0, typeIndex);
-    el.innerHTML = current;
-    
-    if (!isDeleting && typeIndex < typingText.length) {
-        typeIndex++; setTimeout(typeWriter, 100);
-    } else if (isDeleting && typeIndex > 0) {
-        typeIndex--; setTimeout(typeWriter, 50);
-    } else {
-        isDeleting = !isDeleting; setTimeout(typeWriter, isDeleting ? 2000 : 500);
-    }
-}
-
-function startLoopingCounter() {
-    const el = document.getElementById("loopCounter");
-    if (!el) return;
-
-    const TARGET = 200;
-    const CELL_H = 44;
-    const DIGITS_COUNT = TARGET.toString().length;
-    const cumIdx = new Array(DIGITS_COUNT).fill(0);
-
-    function buildSlotDOM() {
-        el.innerHTML = '';
-        for (let col = 0; col < DIGITS_COUNT; col++) {
-            const wrap = document.createElement('span');
-            wrap.style.cssText = `overflow:hidden; height:${CELL_H}px; display:inline-block; position:relative; vertical-align:top;`;
-            const track = document.createElement('span');
-            track.className = 'counter-digit-track';
-            track.dataset.col = col;
-            for (let rep = 0; rep < 3; rep++) {
-                for (let d = 0; d <= 9; d++) {
-                    const span = document.createElement('span');
-                    span.className = 'counter-digit';
-                    span.textContent = d;
-                    track.appendChild(span);
-                }
-            }
-            track.style.transition = 'none';
-            track.style.transform = `translateY(${-10 * CELL_H}px)`;
-            wrap.appendChild(track);
-            el.appendChild(wrap);
-        }
-    }
-
-    function getColumns() {
-        return Array.from(el.querySelectorAll('.counter-digit-track'));
-    }
-
-    function getDigits(num) {
-        return num.toString().padStart(DIGITS_COUNT, '0').split('').map(Number);
-    }
-
-    let prevNum = 0;
-
-    function spinTo(num, goingUp) {
-        const digits = getDigits(num);
-        const prevDigits = getDigits(prevNum);
-        const columns = getColumns();
-
-        columns.forEach((track, i) => {
-            const from = prevDigits[i];
-            const to = digits[i];
-
-            let steps;
-            if (goingUp) {
-                steps = to >= from ? to - from : (10 - from) + to;
-            } else {
-                steps = from >= to ? from - to : (10 - to) + from;
-            }
-
-            if (steps === 0) return;
-
-            const curTransform = track.style.transform;
-            const curY = parseFloat(curTransform.replace('translateY(', '').replace('px)', '')) || (-10 * CELL_H);
-
-            let newY = goingUp ? curY - steps * CELL_H : curY + steps * CELL_H;
-
-            const MIN_Y = -29 * CELL_H;
-            const MAX_Y = 0;
-            if (newY < MIN_Y || newY > MAX_Y) {
-                const resetY = -(10 + to) * CELL_H;
-                track.style.transition = 'none';
-                track.style.transform = `translateY(${resetY}px)`;
-                newY = resetY;
-                return;
-            }
-
-            track.style.transition = `transform ${0.2 + i * 0.04}s cubic-bezier(0.17, 0.67, 0.35, 1.2)`;
-            track.style.transform = `translateY(${newY}px)`;
-        });
-
-        prevNum = num;
-    }
-
-    buildSlotDOM();
-
-    function runCycle() {
-        prevNum = 0;
-        getColumns().forEach(track => {
-            track.style.transition = 'none';
-            track.style.transform = `translateY(${-10 * CELL_H}px)`;
-        });
-
-        let current = 0;
-        const intervalMs = 45;
-        const step = 4;
-        let goingUp = true;
-
-        function tick() {
-            if (goingUp) {
-                current += step;
-                if (current >= TARGET) { current = TARGET; goingUp = false; }
-                spinTo(current, true);
-                setTimeout(tick, current < TARGET ? intervalMs : 2000);
-            } else {
-                current -= step;
-                if (current <= 0) current = 0;
-                spinTo(current, false);
-                if (current > 0) {
-                    setTimeout(tick, intervalMs);
-                } else {
-                    setTimeout(runCycle, 1500);
-                }
-            }
-        }
-
-        setTimeout(tick, 600);
-    }
-
-    runCycle();
-}
-
-function toggleTheme() {
-    const box = document.getElementById('themePreview');
-    const title = document.getElementById('themeTitle');
-    const btn = box.querySelector('button');
-    if(box.style.backgroundColor === 'rgb(34, 34, 34)') {
-        box.style.backgroundColor = '#fff';
-        btn.style.backgroundColor = '#343a40'; btn.style.color = 'white';
-        btn.innerText = '다크 모드 전환';
-        title.innerText = '8. 컬러 테마 (Light)'; title.style.color = '#adb5bd';
-    } else {
-        box.style.backgroundColor = '#222';
-        btn.style.backgroundColor = '#f8f9fa'; btn.style.color = '#222';
-        btn.innerText = '라이트 모드 전환';
-        title.innerText = '8. 컬러 테마 (Dark)'; title.style.color = '#888';
-    }
-}
-
-// =================== URL 변수 ===================
-const portfolioUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSSeX3pWLHORYzu74HfYL39u8-G5s-bQEbPNffQoW5WAXPDSe1MJu8Piz8FKANsgLqUXKOa2ZgbJI_y/pub?gid=1487607827&single=true&output=csv";
-const priceUrl     = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSSeX3pWLHORYzu74HfYL39u8-G5s-bQEbPNffQoW5WAXPDSe1MJu8Piz8FKANsgLqUXKOa2ZgbJI_y/pub?gid=1047411872&single=true&output=csv";
-const eventUrl     = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSSeX3pWLHORYzu74HfYL39u8-G5s-bQEbPNffQoW5WAXPDSe1MJu8Piz8FKANsgLqUXKOa2ZgbJI_y/pub?gid=944738620&single=true&output=csv";
-
-let portfolios = [];
-let currentPage = 1;
-const itemsPerPage = 9;
-let priceData = {};
-let selectedItems = new Map();
-
-// =================== ★ 이벤트 데이터 ===================
-let activeEvents = [];
-let selectedEvent = null;
-
-// =================== 초기화 ===================
-document.addEventListener("DOMContentLoaded", () => {
-    loadPortfolio();
-    loadPriceData();
-    loadEventData();
-    typeWriter();
-    startLoopingCounter();
-    initAccordions();
-    initCalcTooltip();
-
-    document.getElementById('termsCheckbox').addEventListener('change', function() {
-        const copyBtn = document.getElementById('btnCopy');
-        if(this.checked) copyBtn.classList.add('active'); else copyBtn.classList.remove('active');
-    });
-
-    window.onclick = function(event) {
-        let modal = document.getElementById('portfolioModal');
-        let modalContent = modal.querySelector('.modal-content');
-        if (modal.style.display === 'flex' && !modalContent.contains(event.target)) closeModal();
-    }
-});
-
-// =================== ★ 이벤트 데이터 로드 ===================
-function loadEventData() {
-    Papa.parse(eventUrl, {
-        download: true,
-        header: true,
-        complete: function(results) {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-
-            activeEvents = results.data
-                .filter(row => row['제목'] && row['제목'].trim() !== '')
-                .filter(row => {
-                    const dl = (row['마감일'] || '').trim();
-                    if (!dl) return true;
-                    const d = new Date(dl);
-                    if (isNaN(d.getTime())) return true;
-                    d.setHours(23, 59, 59, 999);
-                    return d >= today;
-                })
-                .map(row => {
-                    const discountRaw = (row['할인가'] || '').trim();
-                    let discountType = null;
-                    let discountValue = 0;
-                    if (discountRaw.endsWith('%')) {
-                        discountType = 'percent';
-                        discountValue = parseFloat(discountRaw);
-                    } else if (discountRaw !== '') {
-                        discountType = 'amount';
-                        discountValue = parseInt(discountRaw.replace(/[^0-9]/g, ''), 10) || 0;
-                    }
-
-                    const condRaw = (row['가격 조건'] || '').trim();
-                    let minPrice = 0;
-                    let maxDiscount = Infinity;
-                    if (condRaw !== '') {
-                        const parts = condRaw.split(',').map(s => s.trim());
-                        minPrice = parseInt(parts[0], 10) || 0;
-                        if (parts.length >= 2) {
-                            maxDiscount = parseInt(parts[1], 10) || Infinity;
-                        }
-                    }
-
-                    const productRaw = (row['상품명'] || '').trim();
-                    const products = productRaw === '' ? [] : productRaw.split(',').map(s => s.trim());
-
-                    const deadlineStr = (row['마감일'] || '').trim();
-
-                    return {
-                        title: row['제목'].trim(),
-                        products,
-                        discountType,
-                        discountValue,
-                        minPrice,
-                        maxDiscount,
-                        deadlineStr,
-                    };
-                });
-
-            renderEventSelect();
-        },
-        error: function() {
-            document.getElementById('eventSelectContainer').innerHTML =
-                '<div class="event-none-msg">이벤트 정보를 불러오지 못했습니다.</div>';
-            setTimeout(sendHeight, 150);
-        }
-    });
-}
-
-// =================== ★ 이벤트 할인 계산 (단독 함수) ===================
-function calcEventDiscountForEvent(ev, baseTotal, items) {
-    if (!ev) return 0;
-    if (ev.minPrice > 0 && baseTotal < ev.minPrice) return 0;
-
-    let applicableTotal = 0;
-    const isAll = ev.products.length === 0 || ev.products.some(p => p === '전체');
-
-    items.forEach((data, name) => {
-        if (data.isConsult) return;
-        const itemTotal = data.price * data.qty;
-        if (isAll) {
-            applicableTotal += itemTotal;
-        } else {
-            const pureName = name.replace(/^\[.*?\]\s*/, '');
-            const matched = ev.products.some(p => pureName.includes(p) || p.includes(pureName));
-            if (matched) applicableTotal += itemTotal;
-        }
-    });
-
-    if (applicableTotal === 0) return 0;
-
-    let rawDiscount = 0;
-    if (ev.discountType === 'percent') {
-        rawDiscount = Math.floor(applicableTotal * ev.discountValue / 100);
-    } else if (ev.discountType === 'amount') {
-        rawDiscount = ev.discountValue;
-    }
-
-    if (ev.maxDiscount !== Infinity) rawDiscount = Math.min(rawDiscount, ev.maxDiscount);
-    rawDiscount = Math.min(rawDiscount, applicableTotal);
-
-    return rawDiscount;
-}
-
-// =================== ★ 이벤트 UI 렌더링 ===================
-function renderEventSelect() {
-    const container = document.getElementById('eventSelectContainer');
-    container.innerHTML = '';
-
-    // 현재 선택 항목 기준으로 각 이벤트의 할인액 계산
-    const baseTotal = Array.from(selectedItems.values())
-        .filter(d => !d.isConsult)
-        .reduce((s, d) => s + d.price * d.qty, 0);
-
-    // 최대 할인 이벤트 찾기 (선택된 항목이 있을 때만)
-    let bestEventIdx = -1;
-    let bestDiscount = 0;
-    if (selectedItems.size > 0 && baseTotal > 0) {
-        activeEvents.forEach((ev, idx) => {
-            const discount = calcEventDiscountForEvent(ev, baseTotal, selectedItems);
-            if (discount > bestDiscount) {
-                bestDiscount = discount;
-                bestEventIdx = idx;
-            }
-        });
-    }
-
-    // 이벤트 없음 카드
-    const noneCard = document.createElement('label');
-    noneCard.className = 'event-card event-none-card' + (selectedEvent === null ? ' selected' : '');
-    noneCard.innerHTML = `
-        <input type="radio" name="eventRadio" value="__none__" ${selectedEvent === null ? 'checked' : ''}>
-        <div class="event-card-body">
-            <div class="event-card-title">이벤트 없음</div>
-            <div class="event-card-desc" style="color:#aaa;">적용할 이벤트가 없습니다.</div>
-        </div>
-    `;
-    noneCard.querySelector('input').addEventListener('change', function() {
-        if (this.checked) {
-            selectedEvent = null;
-            updateCardSelected();
-            updateSummary();
-        }
-    });
-    container.appendChild(noneCard);
-
-    if (activeEvents.length === 0) {
-        setTimeout(sendHeight, 200);
-        return;
-    }
-
-    activeEvents.forEach((ev, idx) => {
-        const isBestDeal = (idx === bestEventIdx && bestDiscount > 0);
-        const card = document.createElement('label');
-        card.className = 'event-card' + (isBestDeal ? ' best-deal' : '');
-        card.dataset.idx = idx;
-
-        // 선택 상태 유지
-        const isChecked = selectedEvent && selectedEvent.title === ev.title;
-        if (isChecked) card.classList.add('selected');
-
-        // 할인 배지
-        let discDesc = '';
-        if (ev.discountType === 'percent') {
-            discDesc = `<span class="event-badge">-${ev.discountValue}%</span>`;
-        } else if (ev.discountType === 'amount') {
-            discDesc = `<span class="event-badge">-${formatPriceStr(ev.discountValue)}원</span>`;
-        }
-
-        // 조건 텍스트
-        let condParts = [];
-        if (ev.minPrice > 0) condParts.push(`${formatPriceStr(ev.minPrice)}원 이상 선택 시`);
-        if (ev.maxDiscount !== Infinity) condParts.push(`최대 ${formatPriceStr(ev.maxDiscount)}원 할인`);
-
-        // 현재 선택 항목에서 실제 할인 예상액 표시
-        let actualDiscountText = '';
-        if (isBestDeal && bestDiscount > 0) {
-            actualDiscountText = `<div class="event-cond" style="color:#e67700; font-weight:700; margin-top:4px;">→ 현재 선택 기준 <strong>${formatPriceStr(bestDiscount)}원</strong> 할인 예상</div>`;
-        } else if (selectedItems.size > 0 && baseTotal > 0) {
-            const myDiscount = calcEventDiscountForEvent(ev, baseTotal, selectedItems);
-            if (myDiscount > 0) {
-                actualDiscountText = `<div class="event-cond" style="color:#555; margin-top:4px;">→ 현재 선택 기준 ${formatPriceStr(myDiscount)}원 할인 예상</div>`;
-            }
-        }
-
-        const condText = condParts.length > 0
-            ? `<div class="event-cond">· ${condParts.join(' / ')}</div>` : '';
-
-        let productText = '';
-        if (ev.products.length > 0) {
-            const isAll = ev.products.some(p => p === '전체');
-            productText = `<div class="event-cond">· 적용 상품: ${isAll ? '전체' : ev.products.join(', ')}</div>`;
-        }
-
-        // best-deal 배지 (마감일 배지와 겹치지 않도록 순서 주의)
-        const bestDealBadge = isBestDeal
-            ? `<div class="best-deal-badge"><i class="fa-solid fa-bolt"></i> 지금 가장 유리!</div>` : '';
-
-        const deadlineBadge = ev.deadlineStr
-            ? `<span class="event-card-deadline"><i class="fa-regular fa-clock"></i> ~${ev.deadlineStr}</span>` : '';
-
-        card.innerHTML = `
-            ${bestDealBadge}
-            ${deadlineBadge}
-            <input type="radio" name="eventRadio" value="${idx}" ${isChecked ? 'checked' : ''}>
-            <div class="event-card-body">
-                <div class="event-card-title">${ev.title}</div>
-                <div class="event-card-desc">${discDesc}${condText}${productText}${actualDiscountText}</div>
-            </div>
-        `;
-
-        card.querySelector('input').addEventListener('change', function() {
-            if (this.checked) {
-                selectedEvent = activeEvents[idx];
-                updateCardSelected();
-                updateSummary();
-            }
-        });
-
-        container.appendChild(card);
-    });
-
-    setTimeout(sendHeight, 200);
-}
-
-function updateCardSelected() {
-    document.querySelectorAll('.event-card').forEach(card => {
-        const radio = card.querySelector('input[type="radio"]');
-        if (radio && radio.checked) {
-            card.classList.add('selected');
-        } else {
-            card.classList.remove('selected');
-        }
-    });
-}
-
-// =================== ★ 이벤트 할인 계산 (updateSummary용) ===================
-function calcEventDiscount(baseTotal) {
-    if (!selectedEvent) return { discountAmount: 0, discountLabel: '', applicable: false };
-
-    const ev = selectedEvent;
-
-    if (ev.minPrice > 0 && baseTotal < ev.minPrice) {
-        return {
-            discountAmount: 0,
-            discountLabel: `(${formatPriceStr(ev.minPrice)}원 이상 선택 시 적용)`,
-            applicable: false
-        };
-    }
-
-    let applicableTotal = 0;
-    const isAll = ev.products.length === 0 || ev.products.some(p => p === '전체');
-
-    selectedItems.forEach((data, name) => {
-        if (data.isConsult) return;
-        const itemTotal = data.price * data.qty;
-
-        if (isAll) {
-            applicableTotal += itemTotal;
-        } else {
-            const pureName = name.replace(/^\[.*?\]\s*/, '');
-            const matched = ev.products.some(p => pureName.includes(p) || p.includes(pureName));
-            if (matched) applicableTotal += itemTotal;
-        }
-    });
-
-    if (applicableTotal === 0) {
-        return { discountAmount: 0, discountLabel: '', applicable: false };
-    }
-
-    let rawDiscount = 0;
-    if (ev.discountType === 'percent') {
-        rawDiscount = Math.floor(applicableTotal * ev.discountValue / 100);
-    } else if (ev.discountType === 'amount') {
-        rawDiscount = ev.discountValue;
-    }
-
-    if (ev.maxDiscount !== Infinity) {
-        rawDiscount = Math.min(rawDiscount, ev.maxDiscount);
-    }
-
-    rawDiscount = Math.min(rawDiscount, applicableTotal);
-
-    let discLabel = ev.title;
-    if (ev.discountType === 'percent') discLabel += ` (-${ev.discountValue}%)`;
-    else if (ev.discountType === 'amount') discLabel += ` (-${formatPriceStr(ev.discountValue)}원)`;
-
-    return { discountAmount: rawDiscount, discountLabel: discLabel, applicable: true };
-}
-
-// =================== 포트폴리오 스크립트 ===================
-function loadPortfolio() {
-    Papa.parse(portfolioUrl, {
-        download: true, header: true,
-        complete: function(results) {
-            portfolios = results.data.filter(item => item['제목'] && item['제목'].trim() !== '');
-            renderPortfolio();
-        }
-    });
-}
-
-function renderPortfolio() {
-    const grid = document.getElementById('portfolioGrid');
-    const pagination = document.getElementById('portfolioPagination');
-    grid.innerHTML = ''; pagination.innerHTML = '';
-
-    const totalPages = Math.ceil(portfolios.length / itemsPerPage);
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const currentItems = portfolios.slice(startIndex, startIndex + itemsPerPage);
-
-    currentItems.forEach((item, index) => {
-        const div = document.createElement('div');
-        div.className = 'portfolio-item';
-        div.onclick = function(e) { e.stopPropagation(); openModal(startIndex + index); };
-        
-        let imgUrls = item['이미지 링크'] ? item['이미지 링크'].split(/\r?\n/) : [];
-        let thumbUrl = imgUrls.length > 0 ? imgUrls[0].trim().replace('dl=1', 'raw=1') : 'https://via.placeholder.com/400x300';
-        
-        let rawPrice = item['가격'] || '별도 문의';
-        let displayPrice = rawPrice.includes('비공개') ? '비공개' : formatPriceStr(rawPrice) + '원';
-        const tagsHtml = item['태그'] ? `<div class="portfolio-tags">` + item['태그'].split(',').map(t => `<span>#${t.trim()}</span>`).join('') + `</div>` : '';
-
-        div.innerHTML = `
-            <div class="portfolio-img-wrapper"><img src="${thumbUrl}" alt="${item['제목']}" loading="lazy"></div>
-            <div class="portfolio-info">
-                <h4>${item['제목']}</h4>${tagsHtml}<p>${item['설명'].replace(/\n/g, ' ')}</p><div class="portfolio-price">${displayPrice}</div>
-            </div>
-        `;
-        grid.appendChild(div);
-    });
-
-    if(totalPages > 1) {
-        const prev = document.createElement('button');
-        prev.className = 'page-btn'; prev.innerHTML = '<i class="fa-solid fa-chevron-left"></i>';
-        prev.onclick = () => { if(currentPage > 1) { currentPage--; renderPortfolio(); sendHeight(); } };
-        pagination.appendChild(prev);
-
-        for(let i=1; i<=totalPages; i++) {
-            const btn = document.createElement('button');
-            btn.className = `page-btn ${i === currentPage ? 'active' : ''}`;
-            btn.innerText = i; btn.onclick = () => { currentPage = i; renderPortfolio(); sendHeight(); };
-            pagination.appendChild(btn);
-        }
-
-        const next = document.createElement('button');
-        next.className = 'page-btn'; next.innerHTML = '<i class="fa-solid fa-chevron-right"></i>';
-        next.onclick = () => { if(currentPage < totalPages) { currentPage++; renderPortfolio(); sendHeight(); } };
-        pagination.appendChild(next);
-    }
-}
-
-function openModal(index) {
-    const item = portfolios[index];
-    const modal = document.getElementById('portfolioModal');
-    const modalContent = modal.querySelector('.modal-content');
-    
-    let imgUrls = item['이미지 링크'] ? item['이미지 링크'].split(/\r?\n/) : [];
-    let imgsHtml = '';
-    imgUrls.forEach(url => {
-        if(url.trim()) imgsHtml += `<img src="${url.trim().replace('dl=1', 'raw=1')}" alt="포트폴리오 이미지">`;
-    });
-    
-    document.getElementById('modalImageContainer').innerHTML = imgsHtml;
-    
-    const desc = item['설명'] ? item['설명'].replace(/\n/g, '<br>') : '';
-    const tags = item['태그'] ? item['태그'].split(',').map(t => `<span>#${t.trim()}</span>`).join('') : '';
-    const inc = item['포함된 상품'] ? item['포함된 상품'].replace(/\n/g, '<br> - ') : '';
-    let rawPrice = item['가격'] || '별도 문의';
-    let price = rawPrice.includes('비공개') ? '비공개' : formatPriceStr(rawPrice) + '원';
-
-    document.getElementById('modalDetails').innerHTML = `
-        <h3>${item['제목']}</h3><div class="meta meta-tags">${tags}</div>
-        <div class="meta"><span><i class="fa-regular fa-calendar"></i> 작업일: ${item['작업일']}</span><span style="color:#0056b3;"><i class="fa-solid fa-coins"></i> 가격: ${price}</span></div>
-        <div style="background:#f8f9fa; padding:20px; border-radius:12px; margin-bottom:15px; border:1px solid #eee;">
-            <strong style="color:#111; font-size:16px;">상세 설명</strong><br><p style="margin-top:8px; color:#555;">${desc}</p>
-        </div>
-        <div style="background:#e7f5ff; padding:20px; border-radius:12px; border:1px solid #d0ebff;">
-            <strong style="color:#0056b3; font-size:16px;">포함된 옵션</strong><br><p style="margin-top:8px; color:#333; font-weight:500;"> - ${inc}</p>
-        </div>
-    `;
-    
-    modalContent.style.maxHeight = (parentViewHeight * 0.85) + 'px';
-    modal.style.display = 'flex';
-    modalContent.style.marginTop = Math.max(20, iframeCenterY - (modalContent.offsetHeight / 2)) + 'px';
-    setTimeout(sendHeight, 150);
-}
-
-function closeModal() { 
-    document.getElementById('portfolioModal').style.display = 'none'; 
-    setTimeout(sendHeight, 150);
-}
-
-// =================== 견적 계산기 스크립트 ===================
-function loadPriceData() {
-    Papa.parse(priceUrl, {
-        download: true, header: true,
-        complete: function(res) {
-            res.data.filter(i => i['카테고리']?.trim()).forEach(i => {
-                const cat = i['카테고리'].trim();
-                if(!priceData[cat]) priceData[cat] = [];
-                const rawPrice = i['가격'].replace(/[^0-9\-]/g, '');
-                const priceNum = rawPrice === '' ? 0 : parseInt(rawPrice);
-                const desc = (i['설명'] || '').trim();
-                priceData[cat].push({ name: i['상품명'], price: priceNum, desc: desc });
-            });
-            renderCalc();
-        }
-    });
-}
-
-function renderCalc() {
-    const container = document.getElementById('calcOptions');
-    container.innerHTML = '';
-
-    for (const [category, items] of Object.entries(priceData)) {
-        const catDiv = document.createElement('div');
-        catDiv.className = 'calc-category';
-        catDiv.innerHTML = `<h4>${category}</h4>`;
-
-        items.forEach((item, index) => {
-            const id = `calc_${category}_${index}`;
-            const priceNum = item.price;
-            const priceStr = priceNum === -1 ? '상담 후 결정' : formatPriceStr(priceNum) + '원';
-
-            const fullName = `[${category}] ${item.name}`;
-            const isPerItem = item.name.includes('(개당)');
-            const isMonthly = !isPerItem && /\d+개월/.test(item.name);
-
-            const wrapDiv = document.createElement('div');
-            wrapDiv.className = 'calc-item-wrapper';
-
-            const itemDiv = document.createElement('div');
-            itemDiv.className = 'calc-item';
-            itemDiv.id = `box_${id}`;
-            if (item.desc) itemDiv.dataset.desc = item.desc;
-
-            itemDiv.innerHTML = `
-                <label for="${id}">
-                    <input type="checkbox" id="${id}" value="${priceNum}" data-name="${fullName}" data-is-per="${isPerItem}" data-is-monthly="${isMonthly}" onchange="updateCalcCheckbox(this)">
-                    <span class="calc-item-label-wrap">
-                        <span class="calc-item-name">${item.name}</span>
-                    </span>
-                </label>
-                <div class="item-price">${priceStr}</div>
-            `;
-            wrapDiv.appendChild(itemDiv);
-
-            if (isPerItem) {
-                const dropDiv = document.createElement('div');
-                dropDiv.className = 'qty-dropdown';
-                dropDiv.id = `qtywrap_${id}`;
-                dropDiv.innerHTML = `
-                    <span style="color:#555; font-size:14px; font-weight:bold;">수량을 입력해주세요 <i class="fa-solid fa-arrow-right"></i></span>
-                    <div><input type="number" id="qty_${id}" min="1" value="1" data-name="${fullName}" data-price="${priceNum}" onchange="updateCalcQty(this)"><span style="font-weight:bold; color:#333; margin-left:5px;">개</span></div>
-                `;
-                wrapDiv.appendChild(dropDiv);
-            } else if (isMonthly) {
-                const dropDiv = document.createElement('div');
-                dropDiv.className = 'qty-dropdown';
-                dropDiv.id = `qtywrap_${id}`;
-                dropDiv.innerHTML = `
-                    <span style="color:#555; font-size:14px; font-weight:bold;">개월 수를 선택해주세요 <i class="fa-solid fa-arrow-right"></i></span>
-                    <div><input type="number" id="qty_${id}" min="1" value="1" data-name="${fullName}" data-price="${priceNum}" onchange="updateCalcQty(this)"><span style="font-weight:bold; color:#333; margin-left:5px;">개월</span></div>
-                `;
-                wrapDiv.appendChild(dropDiv);
-            }
-            catDiv.appendChild(wrapDiv);
-        });
-        container.appendChild(catDiv);
-    }
-}
-
-function updateCalcCheckbox(cb) {
-    const name = cb.getAttribute('data-name');
-    const price = parseInt(cb.value);
-    const isPer = cb.getAttribute('data-is-per') === 'true';
-    const isMonthly = cb.getAttribute('data-is-monthly') === 'true';
-    const box = document.getElementById(`box_${cb.id}`);
-
-    if(cb.checked) {
-        let qty = 1;
-        if(isPer || isMonthly) {
-            document.getElementById(`qtywrap_${cb.id}`).classList.add('show');
-            box.classList.add('has-qty');
-            qty = parseInt(document.getElementById(`qty_${cb.id}`).value) || 1;
-        }
-        selectedItems.set(name, { price: price, qty: qty, id: cb.id, isMonthly: isMonthly, isConsult: price === -1 });
-    } else {
-        if(isPer || isMonthly) {
-            document.getElementById(`qtywrap_${cb.id}`).classList.remove('show');
-            box.classList.remove('has-qty');
-        }
-        selectedItems.delete(name);
-    }
-    updateSummary();
-    toggleBudgetField();
-    toggleOmakaseNotice(); // ★ 오마카세 안내 업데이트
-    renderEventSelect();   // ★ 이벤트 best-deal 재계산
-    setTimeout(sendHeight, 150);
-}
-
-// =================== ★ 오마카세 안내 멘트 토글 ===================
-function toggleOmakaseNotice() {
-    const hasOmakase = Array.from(selectedItems.keys()).some(k => k.includes('오마카세'));
-    const notice = document.getElementById('omakaseNotice');
-    if (hasOmakase) {
-        notice.classList.add('show');
-    } else {
-        notice.classList.remove('show');
-    }
-    setTimeout(sendHeight, 150);
-}
-
-function toggleBudgetField() {
-    const hasOmakase = Array.from(selectedItems.keys()).some(k => k.includes('맞춤 오마카세'));
-    const budgetGroup = document.getElementById('budgetGroup');
-    const etcLabel = document.getElementById('etcLabel');
-
-    if (hasOmakase) {
-        budgetGroup.style.display = 'block';
-        etcLabel.textContent = '8. 기타 요청사항';
-    } else {
-        budgetGroup.style.display = 'none';
-        etcLabel.textContent = '7. 기타 요청사항';
-    }
-}
-
-function updateCalcQty(input) {
-    const name = input.getAttribute('data-name');
-    const price = parseInt(input.getAttribute('data-price'));
-    let qty = parseInt(input.value) || 1;
-    if(qty < 1) { qty = 1; input.value = 1; }
-    if(selectedItems.has(name)) {
-        selectedItems.set(name, { price: price, qty: qty, isConsult: price === -1 });
-        updateSummary();
-        renderEventSelect(); // ★ 수량 변경 시도 best-deal 재계산
-    }
-}
-
-// =================== ★ 견적 요약 업데이트 ===================
-function updateSummary() {
-    const list = document.getElementById('selectedList');
-    const totalDisplay = document.getElementById('totalPriceDisplay');
-    list.innerHTML = '';
-    let baseTotal = 0;
-    let hasConsult = false;
-
-    if(selectedItems.size === 0) {
-        list.innerHTML = '<li style="color:#6c757d; justify-content:center; padding: 10px 0;">선택된 항목이 없습니다.</li>';
-        totalDisplay.innerText = '0원';
-        return;
-    }
-
-    selectedItems.forEach((data, name) => {
-        if (data.isConsult) {
-            hasConsult = true;
-            const li = document.createElement('li');
-            const unit = data.isMonthly ? '개월' : '개';
-            const nDisp = data.qty > 1 ? `${name} <span style="color:#74c0fc;">(x${data.qty}${unit})</span>` : name;
-            li.innerHTML = `<span>${nDisp}</span> <span style="color:#ffc107;">상담 후 결정</span>`;
-            list.appendChild(li);
-        } else {
-            const itemTotal = data.price * data.qty;
-            baseTotal += itemTotal;
-            const priceStr = formatPriceStr(itemTotal) + '원';
-            const unit = data.isMonthly ? '개월' : '개';
-            const nDisp = data.qty > 1 ? `${name} <span style="color:#74c0fc;">(x${data.qty}${unit})</span>` : name;
-            const li = document.createElement('li');
-            li.innerHTML = `<span>${nDisp}</span> <span>${priceStr}</span>`;
-            list.appendChild(li);
-        }
-    });
-
-    const { discountAmount, discountLabel, applicable } = calcEventDiscount(baseTotal);
-
-    if (selectedEvent) {
-        const hr = document.createElement('hr');
-        hr.className = 'discount-divider';
-        list.appendChild(hr);
-
-        if (!applicable && selectedEvent.minPrice > 0 && baseTotal < selectedEvent.minPrice) {
-            const warnLi = document.createElement('li');
-            warnLi.innerHTML = `<span style="color:#ffc107;"><i class="fa-solid fa-triangle-exclamation"></i> ${selectedEvent.title}</span><span style="color:#ffc107; font-size:12px;">${formatPriceStr(selectedEvent.minPrice)}원 미만 — 미적용</span>`;
-            list.appendChild(warnLi);
-        } else if (applicable && discountAmount > 0) {
-            const discLi = document.createElement('div');
-            discLi.className = 'discount-row';
-            discLi.innerHTML = `<span><i class="fa-solid fa-tag" style="color:#63e6be; margin-right:4px;"></i>${discountLabel}</span><span>-${formatPriceStr(discountAmount)}원</span>`;
-            list.appendChild(discLi);
-        }
-    }
-
-    const finalTotal = Math.max(0, baseTotal - discountAmount);
-
-    if (hasConsult && finalTotal === 0 && baseTotal === 0) {
-        totalDisplay.innerText = '상담 후 결정';
-    } else if (hasConsult) {
-        totalDisplay.innerText = formatPriceStr(finalTotal) + '원 + 상담';
-    } else {
-        totalDisplay.innerText = formatPriceStr(finalTotal) + '원';
-    }
-
-    setTimeout(sendHeight, 150); 
-}
-
-function resetCalc(btnElement) {
-    document.querySelectorAll('.calc-options input[type="checkbox"]').forEach(cb => cb.checked = false);
-    document.querySelectorAll('.calc-options input[type="number"]').forEach(num => num.value = 1);
-    document.querySelectorAll('.qty-dropdown').forEach(d => d.classList.remove('show'));
-    document.querySelectorAll('.calc-item').forEach(b => b.classList.remove('has-qty'));
-    
-    document.getElementById('inquiryMethod').value = '';
-    document.getElementById('inquiryPageLink').value = '';
-    document.getElementById('inquiryReference').value = '';
-    document.getElementById('inquiryBudget').value = '';
-    document.getElementById('inquiryStructure').value = '';
-    document.getElementById('inquiryEtc').value = '';
-
-    refImages = [];
-    renderRefImagePreview();
-    
-    const colorWraps = document.querySelectorAll('.color-picker-wrap');
-    colorWraps.forEach((wrap, index) => {
-        if(index === 0) {
-            wrap.querySelector('.inquiryColor').value = '#0056b3';
-            wrap.querySelector('.inquiryColorHex').value = '#0056B3';
-        } else {
-            wrap.remove();
-        }
-    });
-
-    selectedEvent = null;
-    const noneRadio = document.querySelector('input[name="eventRadio"][value="__none__"]');
-    if (noneRadio) { noneRadio.checked = true; updateCardSelected(); }
-
-    selectedItems.clear();
-    updateSummary();
-    toggleBudgetField();
-    toggleOmakaseNotice(); // ★ 초기화 시 오마카세 안내도 숨김
-    renderEventSelect();   // ★ 초기화 시 best-deal 뱃지도 리셋
-
-    document.getElementById('termsCheckbox').checked = false;
-    document.getElementById('btnCopy').classList.remove('active');
-    
-    showToast("모든 폼과 선택 내역이 초기화되었습니다.", btnElement);
-    setTimeout(sendHeight, 150);
-}
-
-// =================== ★ 문의 복사 ===================
-function copyEstimate(btnElement) {
-    const termsCb = document.getElementById('termsCheckbox');
-    if (!termsCb.checked) {
-        showToast("안내사항을 확인하시고 체크박스에 동의해주셔야 합니다.", btnElement); return;
-    }
-    if(selectedItems.size === 0) { showToast("선택된 견적 옵션이 없습니다.", btnElement); return; }
-    
-    const method = document.getElementById('inquiryMethod').value || '미선택';
-    const pageLink = document.getElementById('inquiryPageLink').value.trim() || '없음';
-    const ref = document.getElementById('inquiryReference').value || '없음';
-    const budget = document.getElementById('budgetGroup').style.display !== 'none'
-        ? (document.getElementById('inquiryBudget').value.trim() || '미기재')
-        : null;
-    
-    let colors = [];
-    document.querySelectorAll('.inquiryColorHex').forEach(el => colors.push(el.value));
-    const colorStr = colors.join(', ');
-    
-    const structure = document.getElementById('inquiryStructure').value || '미기재';
-    const etc = document.getElementById('inquiryEtc').value || '없음';
-
-    let eventText = '없음';
-    if (selectedEvent) {
-        const { discountAmount, applicable } = calcEventDiscount(
-            Array.from(selectedItems.values()).filter(d => !d.isConsult).reduce((s, d) => s + d.price * d.qty, 0)
+/* 영수증 */
+.receipt-paper{
+    width:86%;
+    background:
+        repeating-linear-gradient(
+            to bottom,
+            #fff,
+            #fff 28px,
+            #f4f4f4 29px
         );
-        if (applicable && discountAmount > 0) {
-            eventText = `${selectedEvent.title} (할인 적용: -${formatPriceStr(discountAmount)}원)`;
-        } else if (selectedEvent.minPrice > 0) {
-            eventText = `${selectedEvent.title} (조건 미충족 — 미적용)`;
-        } else {
-            eventText = selectedEvent.title;
-        }
+    margin-top:-260px;
+    border-radius:0 0 10px 10px;
+    position:relative;
+    animation:printReceipt 4s steps(40,end) forwards;
+    box-shadow:0 0 15px rgba(0,0,0,.15);
+}
+
+/* 지직 효과 */
+.receipt-noise{
+    position:absolute;
+    inset:0;
+    background:
+        repeating-linear-gradient(
+            to bottom,
+            rgba(0,0,0,.03) 0px,
+            rgba(0,0,0,.03) 2px,
+            transparent 2px,
+            transparent 4px
+        );
+    mix-blend-mode:multiply;
+    animation:noiseFlicker .08s infinite;
+    pointer-events:none;
+}
+
+@keyframes noiseFlicker{
+    0%{transform:translateY(0);}
+    100%{transform:translateY(2px);}
+}
+
+/* 출력 애니 */
+@keyframes printReceipt{
+    0%{
+        margin-top:-260px;
     }
-
-    let labelNum = 1;
-    let textPart = "[ 문의 양식 ]\n";
-    textPart += `${labelNum++}. 제작 방식: ${method}\n`;
-    textPart += `${labelNum++}. 페이지 링크: ${pageLink}\n`;
-    textPart += `${labelNum++}. 디자인 레퍼런스: ${ref}\n`;
-    textPart += `${labelNum++}. 메인 색상: ${colorStr}\n`;
-    textPart += `${labelNum++}. 상세페이지 구성: ${structure}\n`;
-    textPart += `${labelNum++}. 이벤트: ${eventText}\n`;
-    if (budget !== null) textPart += `${labelNum++}. 예산: ${budget}\n`;
-    textPart += `${labelNum++}. 기타 요청사항: ${etc}\n\n`;
-
-    textPart += "[ 의뢰 및 견적 내역 ]\n";
-    let baseTotal = 0;
-    let hasConsult = false;
-    selectedItems.forEach((data, name) => {
-        if (data.isConsult) {
-            hasConsult = true;
-            const unit = data.isMonthly ? '개월' : '개';
-            textPart += `- ${name}${data.qty > 1 ? ` (x${data.qty}${unit})` : ''} : 상담 후 결정\n`;
-        } else {
-            const itemTotal = data.price * data.qty;
-            baseTotal += itemTotal;
-            const priceStr = formatPriceStr(itemTotal) + '원';
-            const unit = data.isMonthly ? '개월' : '개';
-            textPart += `- ${name}${data.qty > 1 ? ` (x${data.qty}${unit})` : ''} : ${priceStr}\n`;
-        }
-    });
-
-    const { discountAmount, discountLabel, applicable } = calcEventDiscount(baseTotal);
-    const finalTotal = Math.max(0, baseTotal - discountAmount);
-
-    textPart += "\n----------------------\n";
-    if (applicable && discountAmount > 0) {
-        textPart += `소계: ${formatPriceStr(baseTotal)}원\n`;
-        textPart += `이벤트 할인 (${discountLabel}): -${formatPriceStr(discountAmount)}원\n`;
+    15%{
+        margin-top:-220px;
     }
-
-    if (hasConsult && finalTotal === 0 && baseTotal === 0) {
-        textPart += `예상 총액 : 상담 후 결정\n`;
-    } else if (hasConsult) {
-        textPart += `예상 총액 : ${formatPriceStr(finalTotal)}원 + 상담 후 결정\n`;
-    } else {
-        textPart += `예상 총액 : ${formatPriceStr(finalTotal)}원\n`;
+    18%{
+        margin-top:-228px;
     }
-    textPart += "안내사항(규정)을 모두 읽고 동의하였습니다.\n";
-
-    if (refImages.length === 0) {
-        navigator.clipboard.writeText(textPart).then(() => {
-            showToast("문의 양식과 견적이 복사되었습니다. 문의창에 붙여넣기 해주세요!", btnElement);
-        }).catch(() => { showToast("복사에 실패했습니다. 권한 설정을 확인해주세요.", btnElement); });
-        return;
+    25%{
+        margin-top:-180px;
     }
-
-    let imgTagsHtml = refImages.map(img =>
-        `<img src="${img.dataUrl}" alt="${img.name}" style="max-width:400px; display:block; margin:4px 0;">`
-    ).join('');
-
-    const htmlContent = `<pre style="font-family:sans-serif; white-space:pre-wrap;">${textPart}</pre>${imgTagsHtml}`;
-
-    try {
-        const clipboardItem = new ClipboardItem({
-            'text/plain': new Blob([textPart], { type: 'text/plain' }),
-            'text/html': new Blob([htmlContent], { type: 'text/html' })
-        });
-        navigator.clipboard.write([clipboardItem]).then(() => {
-            showToast(`문의 양식 + 이미지 ${refImages.length}장이 복사되었습니다. 문의창에 붙여넣기 해주세요!`, btnElement);
-        }).catch(() => {
-            navigator.clipboard.writeText(textPart).then(() => {
-                showToast("텍스트만 복사되었습니다 (이미지는 직접 첨부해주세요).", btnElement);
-            }).catch(() => { showToast("복사에 실패했습니다. 권한 설정을 확인해주세요.", btnElement); });
-        });
-    } catch(e) {
-        navigator.clipboard.writeText(textPart).then(() => {
-            showToast("텍스트만 복사되었습니다 (이미지는 직접 첨부해주세요).", btnElement);
-        }).catch(() => { showToast("복사에 실패했습니다. 권한 설정을 확인해주세요.", btnElement); });
+    28%{
+        margin-top:-188px;
+    }
+    40%{
+        margin-top:-130px;
+    }
+    44%{
+        margin-top:-138px;
+    }
+    60%{
+        margin-top:-70px;
+    }
+    64%{
+        margin-top:-78px;
+    }
+    82%{
+        margin-top:-18px;
+    }
+    86%{
+        margin-top:-25px;
+    }
+    100%{
+        margin-top:0;
     }
 }
-</script>
 
-</body>
-</html>
+/* 내부 내용 */
+.receipt-content{
+    padding:34px 20px 28px;
+    text-align:center;
+}
+
+.receipt-mini{
+    font-size:11px;
+    letter-spacing:3px;
+    color:#999;
+    margin-bottom:20px;
+}
+
+.receipt-big{
+    font-size:28px;
+    font-weight:900;
+    color:#111;
+    margin-bottom:10px;
+}
+
+.receipt-plus{
+    font-size:48px;
+    font-weight:900;
+    color:#111;
+    line-height:1;
+    margin-bottom:20px;
+}
+
+.receipt-desc{
+    font-size:14px;
+    color:#555;
+    line-height:1.7;
+    margin-bottom:26px;
+}
+
+/* 바코드 */
+.receipt-barcode{
+    width:100%;
+    height:42px;
+    background:
+        repeating-linear-gradient(
+            to right,
+            #111 0px,
+            #111 2px,
+            transparent 2px,
+            transparent 4px,
+            #111 4px,
+            #111 5px,
+            transparent 5px,
+            transparent 8px
+        );
+    opacity:.8;
+}
+
+/* 종이 끝 울퉁불퉁 */
+.receipt-paper::after{
+    content:'';
+    position:absolute;
+    left:0;
+    bottom:-10px;
+    width:100%;
+    height:20px;
+    background:
+        radial-gradient(circle at 10px 0,#fff 10px,transparent 11px);
+    background-size:20px 20px;
+}
+</style>
