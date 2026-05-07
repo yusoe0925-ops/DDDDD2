@@ -788,9 +788,56 @@
     <img src="사진이름.jpg" alt="" onerror="this.remove();">
     <span>준비 중 ✨</span>
 </div>
+    /* 모달창 배경 */
+.modal {
+    display: none; /* 기본은 숨김 */
+    position: fixed;
+    z-index: 1000;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.8); /* 배경을 어둡게 */
+    cursor: zoom-out;
+}
+
+/* 크게 뜨는 이미지 */
+.modal-content {
+    margin: auto;
+    display: block;
+    max-width: 90%;
+    max-height: 90%;
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(255,255,255,0.2);
+}
+
+/* 닫기 버튼 */
+.close {
+    position: absolute;
+    top: 20px; right: 35px;
+    color: white;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+}
+    
 </style>
 
 <script>
+    // 이미지 클릭 시 모달 열기
+function openSojuModal(imgElement) {
+    const modal = document.getElementById("sojuModal");
+    const modalImg = document.getElementById("imgFull");
+    
+    modal.style.display = "block";
+    modalImg.src = imgElement.src; // 클릭한 이미지의 주소를 큰 창에 복사
+}
+
+// 모달 닫기
+function closeSojuModal() {
+    document.getElementById("sojuModal").style.display = "none";
+}
     // 복제 및 무한 루프 로직
     function initSojuLoop() {
         const wrappers = document.querySelectorAll('.soju-slider-wrapper');
@@ -1258,5 +1305,9 @@
         item.classList.toggle('active');
     }
 </script>
+    <div id="sojuModal" class="modal" onclick="closeSojuModal()">
+    <span class="close">&times;</span>
+    <img class="modal-content" id="imgFull">
+</div>
 </body>
 </html>
