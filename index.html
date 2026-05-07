@@ -754,6 +754,40 @@
 .soju-slider-wrapper::-webkit-scrollbar-thumb:hover {
     background: #ffd93d; /* 마우스 올리면 노란색으로 변신! */
 }
+    /* 1. 준비 중 칸 기본 설정 (예쁜 파란색 배경 부활!) */
+.ready-card { 
+    display: flex !important; 
+    align-items: center !important; 
+    justify-content: center !important; 
+    background-color: #f0faff !important; /* 👈 작가님이 좋아하시던 그 파란색! */
+    border: 2px dashed #6eb6ff !important; /* 👈 예쁜 점선 테두리 */
+    position: relative !important; 
+    overflow: hidden !important;
+    border-radius: 25px !important;
+}
+
+/* 2. 사진 설정 (사진이 로딩되면 파란 배경을 덮어버림) */
+.ready-card img { 
+    position: absolute !important; 
+    top: 0; left: 0; 
+    width: 100% !important; 
+    height: 100% !important; 
+    object-fit: cover !important; 
+    z-index: 5 !important; /* 글자보다 위층 */
+    /* 팁: 처음엔 투명하게 있다가 사진이 로딩되면 나타나게 할 수도 있어요 */
+}
+
+/* 3. 글자 설정 (파란 배경 위에서 잘 보이게) */
+.ready-card span { 
+    color: #6eb6ff !important; 
+    font-weight: bold !important; 
+    font-size: 1rem !important;
+    z-index: 1 !important; /* 사진보다 아래층 */
+}
+    <div class="p-img-card ready-card">
+    <img src="사진이름.jpg" alt="" onerror="this.remove();">
+    <span>준비 중 ✨</span>
+</div>
 </style>
 
 <script>
