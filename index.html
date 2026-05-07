@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Soju SD Portfolio</title>
     
-    <!-- 폰트 -->
     <link href="https://fonts.googleapis.com/css2?family=Gmarket+Sans:wght@500;700&display=swap" rel="stylesheet">
     
     <style>
@@ -16,9 +15,11 @@
             background-color: #f0faff; /* 하늘색 배경 */
             font-family: 'Gmarket Sans', sans-serif;
             display: flex;
-            justify-content: center;
+            flex-direction: column; /* 세로로 나열되도록 추가 */
+            justify-content: flex-start; /* 상단부터 시작 */
             align-items: center;
-            min-height: 90vh;
+            min-height: 100vh;
+            gap: 50px; /* 섹션 간 간격 */
         }
 
         /* 메인 카드 */
@@ -32,6 +33,7 @@
             text-align: center;
             border: 4px solid #ffd93d; /* 노란색 테두리 */
             position: relative;
+            box-sizing: border-box;
         }
 
         /* 프로필 이미지 (둥실둥실 애니메이션 추가) */
@@ -161,696 +163,643 @@
             color: #ffae42;
         }
 
+        /* 리뷰 이벤트 스타일 시작 */
+        .review-event-container {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .stamp-card {
+            max-width: 480px;
+            width: 100%;
+            background: white;
+            border-radius: 40px;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+            border: 3px solid #f0faff;
+        }
+
+        .stamp-header {
+            background: #f0faff;
+            padding: 40px 20px 30px;
+            text-align: center;
+        }
+
+        .stamp-badge {
+            background: #6eb6ff;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .stamp-header h3 {
+            margin: 15px 0 5px;
+            font-size: 1.6rem;
+            color: #333;
+        }
+
+        .stamp-header p {
+            margin: 0;
+            font-size: 0.95rem;
+            color: #777;
+        }
+
+        .stamp-body {
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .stamp-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            border-radius: 25px;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            border-left: 8px solid transparent;
+        }
+
+        .stamp-circle {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 800;
+            font-size: 1rem;
+            color: white;
+            margin-right: 20px;
+            flex-shrink: 0;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .stamp-content strong {
+            display: block;
+            font-size: 1.1rem;
+            color: #333;
+            margin-bottom: 2px;
+        }
+
+        .stamp-content p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #888;
+        }
+
+        .s-blue { background: #f8fbff; border-left-color: #6eb6ff; }
+        .s-blue .stamp-circle { background: #6eb6ff; }
+        .s-blue:hover { transform: scale(1.03); background: white; box-shadow: 0 10px 20px rgba(110, 182, 255, 0.1); }
+
+        .s-yellow { background: #fffdf2; border-left-color: #ffd93d; }
+        .s-yellow .stamp-circle { background: #ffd93d; }
+        .s-yellow:hover { transform: scale(1.03); background: white; box-shadow: 0 10px 20px rgba(255, 217, 61, 0.1); }
+
+        .s-orange { background: #fff9f2; border-left-color: #ffae42; }
+        .s-orange .stamp-circle { background: #ffae42; }
+        .s-orange:hover { transform: scale(1.03); background: white; box-shadow: 0 10px 20px rgba(255, 174, 66, 0.1); }
+
+        .stamp-footer {
+            padding: 20px;
+            text-align: center;
+            font-size: 0.95rem;
+            color: #6eb6ff;
+            font-weight: bold;
+            border-top: 1px dashed #eee;
+        }
+
+        /* 작업 방식 섹션 스타일 */
+        .unified-process-section {
+            max-width: 480px;
+            width: 100%;
+            padding: 0 20px;
+            box-sizing: border-box;
+        }
+
+        .process-main-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .process-tag {
+            display: inline-block;
+            background: #6eb6ff;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        .process-main-header h3 {
+            font-size: 1.7rem;
+            color: #333;
+            margin: 0 0 8px 0;
+        }
+
+        .process-main-header p {
+            font-size: 0.95rem;
+            color: #888;
+            margin: 0;
+        }
+
+        .process-step-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .step-card-item {
+            display: flex;
+            align-items: stretch;
+            gap: 12px;
+        }
+
+        .step-badge {
+            width: 45px;
+            background: white;
+            border: 3px solid #eee;
+            border-radius: 25px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 900;
+            font-size: 1rem;
+            color: #ccc;
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+
+        .step-info-box {
+            flex: 1;
+            background: white;
+            padding: 20px 25px;
+            border-radius: 30px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            border: 2px solid transparent;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .step-header-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .step-header-group strong {
+            font-size: 1.1rem;
+            color: #333;
+        }
+
+        .step-icon {
+            font-size: 1.4rem;
+        }
+
+        .step-info-box p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #777;
+            line-height: 1.6;
+        }
+
+        .s-orange:hover .step-badge { background: #ffae42; border-color: #ffae42; color: white; }
+        .s-orange:hover .step-info-box { border-color: #ffae42; transform: translateX(5px); }
+
+        .s-yellow:hover .step-badge { background: #ffd93d; border-color: #ffd93d; color: white; }
+        .s-yellow:hover .step-info-box { border-color: #ffd93d; transform: translateX(5px); }
+
+        .s-blue:hover .step-badge { background: #6eb6ff; border-color: #6eb6ff; color: white; }
+        .s-blue:hover .step-info-box { border-color: #6eb6ff; transform: translateX(5px); }
+
+        .s-finish:hover .step-badge { background: #ff6b6b; border-color: #ff6b6b; color: white; }
+        .s-finish:hover .step-info-box { border-color: #ff6b6b; transform: translateX(5px); }
+
+        .heart-txt { color: #ff6b6b; font-weight: bold; }
+
+        /* 포트폴리오 갤러리 섹션 스타일 */
+        .portfolio-mega-container { max-width: 500px; width: 100%; box-sizing: border-box; padding: 0 10px; }
+        .mega-header { text-align: center; margin-bottom: 35px; }
+        .mega-badge { background: #6eb6ff; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: bold; }
+        .mega-header h2 { margin: 10px 0; color: #333; font-size: 1.6rem; }
+        .mega-header p { font-size: 0.85rem; color: #aaa; margin: 0; }
+
+        .type-section { margin-bottom: 55px; position: relative; }
+        .type-title { font-size: 1.1rem; font-weight: bold; color: #444; margin-bottom: 12px; padding-left: 5px; }
+
+        .slider-outer-wrapper { position: relative; }
+        .type-slider {
+            display: flex;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            scrollbar-width: none;
+            gap: 12px;
+            padding: 10px;
+            background: #fff;
+            border-radius: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+        }
+        .type-slider::-webkit-scrollbar { display: none; }
+
+        .t-item {
+            min-width: 80%;
+            aspect-ratio: 1/1;
+            border-radius: 22px;
+            overflow: hidden;
+            background: #f9f9f9;
+            border: 2px solid #eee;
+            transition: 0.3s;
+        }
+        .t-item img { width: 100%; height: 100%; object-fit: cover; }
+        .t-item:hover { transform: scale(1.02); border-color: #6eb6ff; }
+
+        .nav-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 32px;
+            height: 32px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            cursor: pointer;
+            z-index: 5;
+            color: #6eb6ff;
+            font-size: 0.8rem;
+            transition: 0.3s;
+        }
+        .nav-arrow:hover { background: #6eb6ff; color: white; }
+        .nav-arrow.left { left: -5px; }
+        .nav-arrow.right { right: -5px; }
+
+        /* 계산기 섹션 스타일 */
+        .calc-container { max-width: 450px; width: 100%; box-sizing: border-box; }
+        .calc-header { text-align: center; margin-bottom: 25px; }
+        .calc-tag { background: #ffae42; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; }
+        
+        .calc-box { background: white; padding: 25px; border-radius: 40px; box-shadow: 0 15px 40px rgba(0,0,0,0.06); border: 3px solid #f0faff; }
+        .calc-group { margin-bottom: 30px; }
+        .group-title { font-size: 0.9rem; font-weight: bold; color: #6eb6ff; margin-bottom: 15px; padding-left: 5px; }
+
+        .calc-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #fdfdfd;
+            border: 2px solid #f5f5f5;
+            border-radius: 20px;
+            margin-bottom: 10px;
+            transition: 0.2s;
+        }
+
+        .calc-item:has(input:checked) { border-color: #6eb6ff; background: #f0faff; }
+
+        .item-info { display: flex; align-items: center; gap: 10px; cursor: pointer; flex: 1; }
+        .item-name { font-size: 0.95rem; color: #444; }
+        .item-price { font-size: 0.85rem; color: #aaa; margin-left: auto; padding-right: 10px; }
+
+        .quantity-control { display: none; align-items: center; gap: 10px; background: white; padding: 5px 10px; border-radius: 15px; border: 1px solid #eee; }
+        .calc-item:has(input:checked) .quantity-control { display: flex; }
+
+        .quantity-control button { border: none; background: #6eb6ff; color: white; width: 24px; height: 24px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .qty-num { font-size: 0.9rem; font-weight: bold; min-width: 15px; text-align: center; }
+
+        .total-area { margin-top: 30px; padding-top: 20px; border-top: 2px dashed #eee; text-align: center; }
+        .total-price { font-size: 2.2rem; font-weight: 900; color: #ff6b6b; margin: 10px 0; }
+        .copy-btn { background: #6eb6ff; color: white; border: none; padding: 10px 20px; border-radius: 15px; cursor: pointer; font-family: 'Gmarket Sans'; transition: 0.3s; width: 100%; }
+        .copy-btn:hover { background: #4a9eff; transform: translateY(-2px); }
     </style>
 </head>
 <body>
 
     <div class="sd-card">
         <div class="tag">SD Illustrator</div>
-        
         <div class="profile-wrapper">
-            <!-- 여기에 작가님 소주 SD 캐릭터 이미지를 넣어주세요! -->
             <img src="https://via.placeholder.com/200x200.png?text=SOJU" alt="쏘주" class="profile-img">
         </div>
-
         <h1 class="name-main">
             <span>쏘</span><span>주</span>
             <small class="handle">@ssojuindeyo</small>
         </h1>
-
         <p class="motto">세상의 모든 것을 <span class="highlight">말랑한 SD</span>로!</p>
-
         <div class="description">
             귀엽고 뽀짝한 <b>SD 캐릭터</b>를 전문으로 작업합니다.<br>
             보글보글 귀엽게 그려드려요 <3
         </div>
     </div>
-<!-- 리뷰 이벤트 섹션 시작 -->
-<div class="review-event-container">
-    <div class="stamp-card">
-        <!-- 상단 헤더: 하늘색 포인트 -->
-        <div class="stamp-header">
-            <span class="stamp-badge">SPECIAL BENEFIT</span>
-            <h3>차곡차곡 리뷰 스탬프</h3>
-            <p>정성 가득 리뷰를 남겨주시면 선물을 드려요!</p>
-        </div>
 
-        <div class="stamp-body">
-            <!-- 1단계: 하늘색 (보글보글) -->
-            <div class="stamp-item s-blue">
-                <div class="stamp-circle">1회</div>
-                <div class="stamp-content">
-                    <strong>보글보글 타입 🫧</strong>
-                    <p>귀여운 SD 캐릭터 선물</p>
+    <div class="review-event-container">
+        <div class="stamp-card">
+            <div class="stamp-header">
+                <span class="stamp-badge">SPECIAL BENEFIT</span>
+                <h3>차곡차곡 리뷰 스탬프</h3>
+                <p>정성 가득 리뷰를 남겨주시면 선물을 드려요!</p>
+            </div>
+            <div class="stamp-body">
+                <div class="stamp-item s-blue">
+                    <div class="stamp-circle">1회</div>
+                    <div class="stamp-content">
+                        <strong>보글보글 타입 🫧</strong>
+                        <p>귀여운 SD 캐릭터 선물</p>
+                    </div>
+                </div>
+                <div class="stamp-item s-yellow">
+                    <div class="stamp-circle">3회</div>
+                    <div class="stamp-content">
+                        <strong>깔끔 타입 (흉상) ✨</strong>
+                        <p>선명하고 예쁜 흉상 작업</p>
+                    </div>
+                </div>
+                <div class="stamp-item s-orange">
+                    <div class="stamp-circle">6회</div>
+                    <div class="stamp-content">
+                        <strong>LD 오마카세 🎁</strong>
+                        <p>풀채색 자유구도 대박 보상</p>
+                    </div>
                 </div>
             </div>
+            <div class="stamp-footer">
+                보글보글 귀엽게 그려드릴게요 <3
+            </div>
+        </div>
+    </div>
 
-            <!-- 2단계: 노란색 (깔끔 흉상) -->
-            <div class="stamp-item s-yellow">
-                <div class="stamp-circle">3회</div>
-                <div class="stamp-content">
-                    <strong>깔끔 타입 (흉상) ✨</strong>
-                    <p>선명하고 예쁜 흉상 작업</p>
+    <div class="unified-process-section">
+        <div class="process-main-header">
+            <span class="process-tag">WORK PROCESS</span>
+            <h3>보글보글 작업 레시피 🫧</h3>
+            <p>소주 작가와 함께하는 즐거운 작업 과정이에요!</p>
+        </div>
+        <div class="process-step-list">
+            <div class="step-card-item s-orange">
+                <div class="step-badge">01</div>
+                <div class="step-info-box">
+                    <div class="step-header-group">
+                        <strong>신청 양식 문의</strong>
+                        <span class="step-icon">💬</span>
+                    </div>
+                    <p>하단의 <b>신청 양식을 복사</b>하여 <br>아트머그 메시지로 상담을 신청해 주세요!</p>
                 </div>
             </div>
-
-            <!-- 3단계: 주황색 (LD 오마카세) -->
-            <div class="stamp-item s-orange">
-                <div class="stamp-circle">6회</div>
-                <div class="stamp-content">
-                    <strong>LD 오마카세 🎁</strong>
-                    <p>풀채색 자유구도 대박 보상</p>
+            <div class="step-card-item s-yellow">
+                <div class="step-badge">02</div>
+                <div class="step-info-box">
+                    <div class="step-header-group">
+                        <strong>결제 확인 후 작업 시작</strong>
+                        <span class="step-icon">💳</span>
+                    </div>
+                    <p>아트머그 결제 확인이 완료되면 <br>즉시 말랑뽀짝 작업을 시작합니다!</p>
+                </div>
+            </div>
+            <div class="step-card-item s-blue">
+                <div class="step-badge">03</div>
+                <div class="step-info-box">
+                    <div class="step-header-group">
+                        <strong>러프 확인 및 피드백</strong>
+                        <span class="step-icon">🎨</span>
+                    </div>
+                    <p>스케치를 먼저 확인해요! <br>수정하고 싶은 부분은 이때 편하게 콕콕!</p>
+                </div>
+            </div>
+            <div class="step-card-item s-finish">
+                <div class="step-badge">04</div>
+                <div class="step-info-box">
+                    <div class="step-header-group">
+                        <strong>최종 전달</strong>
+                        <span class="step-icon">🎁</span>
+                    </div>
+                    <p>맡겨주셔서 감사합니다! 수령 완료 후 <br><b>리뷰 작성 시</b> 조그마한 선물이 가요! <span class="heart-txt"><3</span></p>
                 </div>
             </div>
         </div>
-
-        <div class="stamp-footer">
-            보글보글 귀엽게 그려드릴게요 <3
-        </div>
-    </div>
-</div>
-
-<style>
-    .review-event-container {
-        display: flex;
-        justify-content: center;
-        margin-top: 30px;
-        padding: 10px;
-    }
-
-    .stamp-card {
-        max-width: 480px;
-        width: 100%;
-        background: white;
-        border-radius: 40px;
-        overflow: hidden;
-        box-shadow: 0 15px 40px rgba(0,0,0,0.08);
-        border: 3px solid #f0faff;
-    }
-
-    /* 헤더 부분: 하늘색 배경으로 시원하게 */
-    .stamp-header {
-        background: #f0faff;
-        padding: 40px 20px 30px;
-        text-align: center;
-    }
-
-    .stamp-badge {
-        background: #6eb6ff; /* 하늘색 */
-        color: white;
-        padding: 5px 15px;
-        border-radius: 20px;
-        font-size: 0.8rem;
-        font-weight: bold;
-    }
-
-    .stamp-header h3 {
-        margin: 15px 0 5px;
-        font-size: 1.6rem;
-        color: #333;
-    }
-
-    .stamp-header p {
-        margin: 0;
-        font-size: 0.95rem;
-        color: #777;
-    }
-
-    /* 바디 부분: 각 색상별 아이템 */
-    .stamp-body {
-        padding: 30px 20px;
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-    }
-
-    .stamp-item {
-        display: flex;
-        align-items: center;
-        padding: 15px 20px;
-        border-radius: 25px;
-        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        cursor: pointer;
-        border-left: 8px solid transparent;
-    }
-
-    .stamp-circle {
-        width: 55px;
-        height: 55px;
-        border-radius: 50%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-weight: 800;
-        font-size: 1rem;
-        color: white;
-        margin-right: 20px;
-        flex-shrink: 0;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
-
-    .stamp-content strong {
-        display: block;
-        font-size: 1.1rem;
-        color: #333;
-        margin-bottom: 2px;
-    }
-
-    .stamp-content p {
-        margin: 0;
-        font-size: 0.9rem;
-        color: #888;
-    }
-
-    /* [하늘색 아이템] */
-    .s-blue { background: #f8fbff; border-left-color: #6eb6ff; }
-    .s-blue .stamp-circle { background: #6eb6ff; }
-    .s-blue:hover { transform: scale(1.03); background: white; box-shadow: 0 10px 20px rgba(110, 182, 255, 0.1); }
-
-    /* [노란색 아이템] */
-    .s-yellow { background: #fffdf2; border-left-color: #ffd93d; }
-    .s-yellow .stamp-circle { background: #ffd93d; }
-    .s-yellow:hover { transform: scale(1.03); background: white; box-shadow: 0 10px 20px rgba(255, 217, 61, 0.1); }
-
-    /* [주황색 아이템] */
-    .s-orange { background: #fff9f2; border-left-color: #ffae42; }
-    .s-orange .stamp-circle { background: #ffae42; }
-    .s-orange:hover { transform: scale(1.03); background: white; box-shadow: 0 10px 20px rgba(255, 174, 66, 0.1); }
-
-    .stamp-footer {
-        padding: 20px;
-        text-align: center;
-        font-size: 0.95rem;
-        color: #6eb6ff;
-        font-weight: bold;
-        border-top: 1px dashed #eee;
-    }
-</style>
-  <!-- 작업 방식 섹션 시작 -->
-<div class="unified-process-section">
-    <!-- 헤더 부분: 이전 카드들과 통일된 깔끔한 스타일 -->
-    <div class="process-main-header">
-        <span class="process-tag">WORK PROCESS</span>
-        <h3>보글보글 작업 레시피 🫧</h3>
-        <p>소주 작가와 함께하는 즐거운 작업 과정이에요!</p>
     </div>
 
-    <div class="process-step-list">
-        <!-- 01 상담 -->
-        <div class="step-card-item s-orange">
-            <div class="step-badge">01</div>
-            <div class="step-info-box">
-                <div class="step-header-group">
-                    <strong>신청 양식 문의</strong>
-                    <span class="step-icon">💬</span>
-                </div>
-                <p>하단의 <b>신청 양식을 복사</b>하여 <br>아트머그 메시지로 상담을 신청해 주세요!</p>
-            </div>
+    <div class="portfolio-mega-container">
+        <div class="mega-header">
+            <span class="mega-badge">SOJU ARTWORK</span>
+            <h2>쏘주의 타입별 갤러리 🫧</h2>
+            <p>휠을 굴리거나 화살표를 눌러 구경해보세요!</p>
         </div>
 
-        <!-- 02 결제 -->
-        <div class="step-card-item s-yellow">
-            <div class="step-badge">02</div>
-            <div class="step-info-box">
-                <div class="step-header-group">
-                    <strong>결제 확인 후 작업 시작</strong>
-                    <span class="step-icon">💳</span>
-                </div>
-                <p>아트머그 결제 확인이 완료되면 <br>즉시 말랑뽀짝 작업을 시작합니다!</p>
-            </div>
-        </div>
-
-        <!-- 03 컨펌 -->
-        <div class="step-card-item s-blue">
-            <div class="step-badge">03</div>
-            <div class="step-info-box">
-                <div class="step-header-group">
-                    <strong>러프 확인 및 피드백</strong>
-                    <span class="step-icon">🎨</span>
-                </div>
-                <p>스케치를 먼저 확인해요! <br>수정하고 싶은 부분은 이때 편하게 콕콕!</p>
-            </div>
-        </div>
-
-        <!-- 04 마감 -->
-        <div class="step-card-item s-finish">
-            <div class="step-badge">04</div>
-            <div class="step-info-box">
-                <div class="step-header-group">
-                    <strong>최종 전달</strong>
-                    <span class="step-icon">🎁</span>
-                </div>
-                <p>맡겨주셔서 감사합니다! 수령 완료 후 <br><b>리뷰 작성 시</b> 조그마한 선물이 가요! <span class="heart-txt"><3</span></p>
-            </div>
-        </div>
-    </div>
-</div>
-
-<style>
-    /* 전체 섹션 레이아웃 */
-    .unified-process-section {
-        max-width: 480px;
-        margin: 50px auto;
-        padding: 0 20px;
-        font-family: 'Gmarket Sans', sans-serif;
-    }
-
-    /* 상단 헤더: 작가 소개 카드와 비슷한 톤 */
-    .process-main-header {
-        text-align: center;
-        margin-bottom: 40px;
-    }
-
-    .process-tag {
-        display: inline-block;
-        background: #6eb6ff; /* 하늘색 포인트 */
-        color: white;
-        padding: 5px 15px;
-        border-radius: 50px;
-        font-size: 0.8rem;
-        font-weight: bold;
-        margin-bottom: 12px;
-    }
-
-    .process-main-header h3 {
-        font-size: 1.7rem;
-        color: #333;
-        margin: 0 0 8px 0;
-    }
-
-    .process-main-header p {
-        font-size: 0.95rem;
-        color: #888;
-        margin: 0;
-    }
-
-    /* 카드 리스트 */
-    .process-step-list {
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-    }
-
-    .step-card-item {
-        display: flex;
-        align-items: stretch;
-        gap: 12px;
-    }
-
-    /* 숫자 뱃지: 이전 카드들의 동그란 포인트 활용 */
-    .step-badge {
-        width: 45px;
-        background: white;
-        border: 3px solid #eee;
-        border-radius: 25px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-weight: 900;
-        font-size: 1rem;
-        color: #ccc;
-        transition: all 0.3s;
-    }
-
-    /* 정보 박스: 흰색 배경 + 부드러운 그림자 (통일감의 핵심) */
-    .step-info-box {
-        flex: 1;
-        background: white;
-        padding: 20px 25px;
-        border-radius: 30px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-        border: 2px solid transparent;
-        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-
-    .step-header-group {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 8px;
-    }
-
-    .step-header-group strong {
-        font-size: 1.1rem;
-        color: #333;
-    }
-
-    .step-icon {
-        font-size: 1.4rem;
-    }
-
-    .step-info-box p {
-        margin: 0;
-        font-size: 0.9rem;
-        color: #777;
-        line-height: 1.6;
-    }
-
-    /* 컬러 포인트 적용 (이전 카드들과 동일한 컬러 코드) */
-    .s-orange:hover .step-badge { background: #ffae42; border-color: #ffae42; color: white; }
-    .s-orange:hover .step-info-box { border-color: #ffae42; transform: translateX(5px); }
-
-    .s-yellow:hover .step-badge { background: #ffd93d; border-color: #ffd93d; color: white; }
-    .s-yellow:hover .step-info-box { border-color: #ffd93d; transform: translateX(5px); }
-
-    .s-blue:hover .step-badge { background: #6eb6ff; border-color: #6eb6ff; color: white; }
-    .s-blue:hover .step-info-box { border-color: #6eb6ff; transform: translateX(5px); }
-
-    .s-finish:hover .step-badge { background: #ff6b6b; border-color: #ff6b6b; color: white; }
-    .s-finish:hover .step-info-box { border-color: #ff6b6b; transform: translateX(5px); }
-
-    .heart-txt { color: #ff6b6b; font-weight: bold; }
-</style>
-  <div class="portfolio-mega-container">
-    <div class="mega-header">
-        <span class="mega-badge">SOJU ARTWORK</span>
-        <h2>쏘주의 타입별 갤러리 🫧</h2>
-        <p>휠을 굴리거나 화살표를 눌러 구경해보세요!</p>
-    </div>
-
-    <!-- 1. 보글보글 타입 -->
-    <div class="type-section">
-        <div class="type-title"><span class="t-icon">🫧</span> 보글보글 타입</div>
-        <div class="slider-outer-wrapper">
-            <button class="nav-arrow left" onclick="scrollSlider(this, -1)">❮</button>
-            <button class="nav-arrow right" onclick="scrollSlider(this, 1)">❯</button>
-            <div class="type-slider s-orange" onwheel="handleWheel(event, this)">
-                <div class="t-item"><img src="이미지링크1" alt="보글보글1"></div>
-                <div class="t-item"><img src="이미지링크2" alt="보글보글2"></div>
-                <div class="t-item"><img src="이미지링크3" alt="보글보글3"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 2. 깔끔 타입 -->
-    <div class="type-section">
-        <div class="type-title"><span class="t-icon">✨</span> 깔끔 타입</div>
-        <div class="slider-outer-wrapper">
-            <button class="nav-arrow left" onclick="scrollSlider(this, -1)">❮</button>
-            <button class="nav-arrow right" onclick="scrollSlider(this, 1)">❯</button>
-            <div class="type-slider s-yellow" onwheel="handleWheel(event, this)">
-                <div class="t-item"><img src="이미지링크1" alt="깔끔1"></div>
-                <div class="t-item"><img src="이미지링크2" alt="깔끔2"></div>
-                <div class="t-item"><img src="이미지링크3" alt="깔끔3"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 3. 짚톡 타입 -->
-    <div class="type-section">
-        <div class="type-title"><span class="t-icon">📱</span> 짚톡 타입</div>
-        <div class="slider-outer-wrapper">
-            <button class="nav-arrow left" onclick="scrollSlider(this, -1)">❮</button>
-            <button class="nav-arrow right" onclick="scrollSlider(this, 1)">❯</button>
-            <div class="type-slider s-blue" onwheel="handleWheel(event, this)">
-                <div class="t-item"><img src="이미지링크1" alt="짚톡1"></div>
-                <div class="t-item"><img src="이미지링크2" alt="짚톡2"></div>
-                <div class="t-item"><img src="이미지링크3" alt="짚톡3"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 4. 구독티콘 타입 -->
-    <div class="type-section">
-        <div class="type-title"><span class="t-icon">📺</span> 구독티콘 타입</div>
-        <div class="slider-outer-wrapper">
-            <button class="nav-arrow left" onclick="scrollSlider(this, -1)">❮</button>
-            <button class="nav-arrow right" onclick="scrollSlider(this, 1)">❯</button>
-            <div class="type-slider s-orange" onwheel="handleWheel(event, this)">
-                <div class="t-item"><img src="이미지링크1" alt="구독1"></div>
-                <div class="t-item"><img src="이미지링크2" alt="구독2"></div>
-                <div class="t-item"><img src="이미지링크3" alt="구독3"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 5. OGQ 타입 -->
-    <div class="type-section">
-        <div class="type-title"><span class="t-icon">💚</span> OGQ 타입</div>
-        <div class="slider-outer-wrapper">
-            <button class="nav-arrow left" onclick="scrollSlider(this, -1)">❮</button>
-            <button class="nav-arrow right" onclick="scrollSlider(this, 1)">❯</button>
-            <div class="type-slider s-yellow" onwheel="handleWheel(event, this)">
-                <div class="t-item"><img src="이미지링크1" alt="OGQ1"></div>
-                <div class="t-item"><img src="이미지링크2" alt="OGQ2"></div>
-                <div class="t-item"><img src="이미지링크3" alt="OGQ3"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 6. 썸네일 타입 -->
-    <div class="type-section">
-        <div class="type-title"><span class="t-icon">🎬</span> 썸네일 타입</div>
-        <div class="slider-outer-wrapper">
-            <button class="nav-arrow left" onclick="scrollSlider(this, -1)">❮</button>
-            <button class="nav-arrow right" onclick="scrollSlider(this, 1)">❯</button>
-            <div class="type-slider s-blue" onwheel="handleWheel(event, this)">
-                <div class="t-item"><img src="이미지링크1" alt="썸네일1"></div>
-                <div class="t-item"><img src="이미지링크2" alt="썸네일2"></div>
-                <div class="t-item"><img src="이미지링크3" alt="썸네일3"></div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<style>
-    /* 전체 스타일 */
-    .portfolio-mega-container { max-width: 500px; margin: 40px auto; font-family: 'Gmarket Sans', sans-serif; padding: 0 10px; }
-    .mega-header { text-align: center; margin-bottom: 35px; }
-    .mega-badge { background: #6eb6ff; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: bold; }
-    .mega-header h2 { margin: 10px 0; color: #333; font-size: 1.6rem; }
-    .mega-header p { font-size: 0.85rem; color: #aaa; margin: 0; }
-
-    /* 타입 섹션 */
-    .type-section { margin-bottom: 55px; position: relative; }
-    .type-title { font-size: 1.1rem; font-weight: bold; color: #444; margin-bottom: 12px; padding-left: 5px; }
-
-    /* 슬라이더 구조 */
-    .slider-outer-wrapper { position: relative; }
-    .type-slider {
-        display: flex;
-        overflow-x: auto;
-        scroll-behavior: smooth;
-        scrollbar-width: none;
-        gap: 12px;
-        padding: 10px;
-        background: #fff;
-        border-radius: 30px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.03);
-    }
-    .type-slider::-webkit-scrollbar { display: none; }
-
-    .t-item {
-        min-width: 80%;
-        aspect-ratio: 1/1;
-        border-radius: 22px;
-        overflow: hidden;
-        background: #f9f9f9;
-        border: 2px solid #eee;
-        transition: 0.3s;
-    }
-    .t-item img { width: 100%; height: 100%; object-fit: cover; }
-    .t-item:hover { transform: scale(1.02); border-color: #6eb6ff; }
-
-    /* 화살표 디자인 */
-    .nav-arrow {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 32px;
-        height: 32px;
-        background: rgba(255, 255, 255, 0.9);
-        border: none;
-        border-radius: 50%;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        cursor: pointer;
-        z-index: 5;
-        color: #6eb6ff;
-        font-size: 0.8rem;
-        transition: 0.3s;
-    }
-    .nav-arrow:hover { background: #6eb6ff; color: white; }
-    .nav-arrow.left { left: -5px; }
-    .nav-arrow.right { right: -5px; }
-</style>
-
-<script>
-    // 휠을 돌리면 가로로 스크롤
-    function handleWheel(event, slider) {
-        if (event.deltaY !== 0) {
-            event.preventDefault();
-            slider.scrollLeft += event.deltaY * 1.5;
-        }
-    }
-
-    // 화살표 클릭 시 이동
-    function scrollSlider(button, direction) {
-        const slider = button.parentElement.querySelector('.type-slider');
-        const scrollAmount = slider.offsetWidth * 0.8;
-        slider.scrollLeft += (scrollAmount * direction);
-    }
-</script>
-  <div class="calc-container">
-    <div class="calc-header">
-        <span class="calc-tag">PRICE CALCULATOR</span>
-        <h3>쏘주의 다 골라담아 계산기 🧺</h3>
-        <p>원하는 타입과 수량을 마음껏 골라보세요!</p>
-    </div>
-
-    <div class="calc-box">
-        <!-- 메인 타입 섹션 (여러 개 선택 가능!) -->
-        <div class="calc-group">
-            <div class="group-title">메인 타입 (중복/다수 선택 가능)</div>
-            
-            <div class="calc-item" data-price="15000">
-                <label class="item-info">
-                    <input type="checkbox" class="main-check">
-                    <span class="item-name">보글보글 타입</span>
-                    <span class="item-price">1.5</span>
-                </label>
-                <div class="quantity-control">
-                    <button onclick="changeQty(this, -1)">-</button>
-                    <span class="qty-num">1</span>
-                    <button onclick="changeQty(this, 1)">+</button>
-                </div>
-            </div>
-
-            <div class="calc-item" data-price="20000">
-                <label class="item-info">
-                    <input type="checkbox" class="main-check">
-                    <span class="item-name">깔끔 타입 (흉상)</span>
-                    <span class="item-price">2.0</span>
-                </label>
-                <div class="quantity-control">
-                    <button onclick="changeQty(this, -1)">-</button>
-                    <span class="qty-num">1</span>
-                    <button onclick="changeQty(this, 1)">+</button>
-                </div>
-            </div>
-
-            <div class="calc-item" data-price="10000">
-                <label class="item-info">
-                    <input type="checkbox" class="main-check">
-                    <span class="item-name">구독티콘/OGQ</span>
-                    <span class="item-price">1.0</span>
-                </label>
-                <div class="quantity-control">
-                    <button onclick="changeQty(this, -1)">-</button>
-                    <span class="qty-num">1</span>
-                    <button onclick="changeQty(this, 1)">+</button>
+        <div class="type-section">
+            <div class="type-title"><span class="t-icon">🫧</span> 보글보글 타입</div>
+            <div class="slider-outer-wrapper">
+                <button class="nav-arrow left" onclick="scrollSlider(this, -1)">❮</button>
+                <button class="nav-arrow right" onclick="scrollSlider(this, 1)">❯</button>
+                <div class="type-slider" onwheel="handleWheel(event, this)">
+                    <div class="t-item"><img src="이미지링크1" alt="보글보글1"></div>
+                    <div class="t-item"><img src="이미지링크2" alt="보글보글2"></div>
+                    <div class="t-item"><img src="이미지링크3" alt="보글보글3"></div>
                 </div>
             </div>
         </div>
 
-        <!-- 추가 옵션 섹션 -->
-        <div class="calc-group">
-            <div class="group-title">추가 옵션</div>
-            <div class="calc-item" data-price="20000">
-                <label class="item-info">
-                    <input type="checkbox" class="main-check">
-                    <span class="item-name">상업적 이용 (방송용 등)</span>
-                    <span class="item-price">+2.0</span>
-                </label>
-            </div>
-            <div class="calc-item" data-price="10000">
-                <label class="item-info">
-                    <input type="checkbox" class="main-check">
-                    <span class="item-name">빠른 마감</span>
-                    <span class="item-price">+1.0</span>
-                </label>
+        <div class="type-section">
+            <div class="type-title"><span class="t-icon">✨</span> 깔끔 타입</div>
+            <div class="slider-outer-wrapper">
+                <button class="nav-arrow left" onclick="scrollSlider(this, -1)">❮</button>
+                <button class="nav-arrow right" onclick="scrollSlider(this, 1)">❯</button>
+                <div class="type-slider" onwheel="handleWheel(event, this)">
+                    <div class="t-item"><img src="이미지링크1" alt="깔끔1"></div>
+                    <div class="t-item"><img src="이미지링크2" alt="깔끔2"></div>
+                    <div class="t-item"><img src="이미지링크3" alt="깔끔3"></div>
+                </div>
             </div>
         </div>
 
-        <!-- 총액 표시 -->
-        <div class="total-area">
-            <div class="total-label">합계 금액</div>
-            <div class="total-price"><span id="total-val">0</span>원</div>
-            <button class="copy-btn" onclick="copyQuote()">견적 복사하기 📋</button>
+        <div class="type-section">
+            <div class="type-title"><span class="t-icon">📱</span> 짚톡 타입</div>
+            <div class="slider-outer-wrapper">
+                <button class="nav-arrow left" onclick="scrollSlider(this, -1)">❮</button>
+                <button class="nav-arrow right" onclick="scrollSlider(this, 1)">❯</button>
+                <div class="type-slider" onwheel="handleWheel(event, this)">
+                    <div class="t-item"><img src="이미지링크1" alt="짚톡1"></div>
+                    <div class="t-item"><img src="이미지링크2" alt="짚톡2"></div>
+                    <div class="t-item"><img src="이미지링크3" alt="짚톡3"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="type-section">
+            <div class="type-title"><span class="t-icon">📺</span> 구독티콘 타입</div>
+            <div class="slider-outer-wrapper">
+                <button class="nav-arrow left" onclick="scrollSlider(this, -1)">❮</button>
+                <button class="nav-arrow right" onclick="scrollSlider(this, 1)">❯</button>
+                <div class="type-slider" onwheel="handleWheel(event, this)">
+                    <div class="t-item"><img src="이미지링크1" alt="구독1"></div>
+                    <div class="t-item"><img src="이미지링크2" alt="구독2"></div>
+                    <div class="t-item"><img src="이미지링크3" alt="구독3"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="type-section">
+            <div class="type-title"><span class="t-icon">💚</span> OGQ 타입</div>
+            <div class="slider-outer-wrapper">
+                <button class="nav-arrow left" onclick="scrollSlider(this, -1)">❮</button>
+                <button class="nav-arrow right" onclick="scrollSlider(this, 1)">❯</button>
+                <div class="type-slider" onwheel="handleWheel(event, this)">
+                    <div class="t-item"><img src="이미지링크1" alt="OGQ1"></div>
+                    <div class="t-item"><img src="이미지링크2" alt="OGQ2"></div>
+                    <div class="t-item"><img src="이미지링크3" alt="OGQ3"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="type-section">
+            <div class="type-title"><span class="t-icon">🎬</span> 썸네일 타입</div>
+            <div class="slider-outer-wrapper">
+                <button class="nav-arrow left" onclick="scrollSlider(this, -1)">❮</button>
+                <button class="nav-arrow right" onclick="scrollSlider(this, 1)">❯</button>
+                <div class="type-slider" onwheel="handleWheel(event, this)">
+                    <div class="t-item"><img src="이미지링크1" alt="썸네일1"></div>
+                    <div class="t-item"><img src="이미지링크2" alt="썸네일2"></div>
+                    <div class="t-item"><img src="이미지링크3" alt="썸네일3"></div>
+                </div>
+            </div>
         </div>
     </div>
-</div>
 
-<style>
-    .calc-container { max-width: 450px; margin: 50px auto; font-family: 'Gmarket Sans', sans-serif; }
-    .calc-header { text-align: center; margin-bottom: 25px; }
-    .calc-tag { background: #ffae42; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; }
-    
-    .calc-box { background: white; padding: 25px; border-radius: 40px; box-shadow: 0 15px 40px rgba(0,0,0,0.06); border: 3px solid #f0faff; }
-    .calc-group { margin-bottom: 30px; }
-    .group-title { font-size: 0.9rem; font-weight: bold; color: #6eb6ff; margin-bottom: 15px; padding-left: 5px; }
+    <div class="calc-container">
+        <div class="calc-header">
+            <span class="calc-tag">PRICE CALCULATOR</span>
+            <h3>쏘주의 다 골라담아 계산기 🧺</h3>
+            <p>원하는 타입과 수량을 마음껏 골라보세요!</p>
+        </div>
 
-    /* 아이템 디자인 */
-    .calc-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 15px;
-        background: #fdfdfd;
-        border: 2px solid #f5f5f5;
-        border-radius: 20px;
-        margin-bottom: 10px;
-        transition: 0.2s;
-    }
+        <div class="calc-box">
+            <div class="calc-group">
+                <div class="group-title">메인 타입 (중복/다수 선택 가능)</div>
+                <div class="calc-item" data-price="15000">
+                    <label class="item-info">
+                        <input type="checkbox" class="main-check">
+                        <span class="item-name">보글보글 타입</span>
+                        <span class="item-price">1.5</span>
+                    </label>
+                    <div class="quantity-control">
+                        <button onclick="changeQty(this, -1)">-</button>
+                        <span class="qty-num">1</span>
+                        <button onclick="changeQty(this, 1)">+</button>
+                    </div>
+                </div>
 
-    .calc-item:has(input:checked) { border-color: #6eb6ff; background: #f0faff; }
+                <div class="calc-item" data-price="20000">
+                    <label class="item-info">
+                        <input type="checkbox" class="main-check">
+                        <span class="item-name">깔끔 타입 (흉상)</span>
+                        <span class="item-price">2.0</span>
+                    </label>
+                    <div class="quantity-control">
+                        <button onclick="changeQty(this, -1)">-</button>
+                        <span class="qty-num">1</span>
+                        <button onclick="changeQty(this, 1)">+</button>
+                    </div>
+                </div>
 
-    .item-info { display: flex; align-items: center; gap: 10px; cursor: pointer; flex: 1; }
-    .item-name { font-size: 0.95rem; color: #444; }
-    .item-price { font-size: 0.85rem; color: #aaa; margin-left: auto; padding-right: 10px; }
+                <div class="calc-item" data-price="10000">
+                    <label class="item-info">
+                        <input type="checkbox" class="main-check">
+                        <span class="item-name">구독티콘/OGQ</span>
+                        <span class="item-price">1.0</span>
+                    </label>
+                    <div class="quantity-control">
+                        <button onclick="changeQty(this, -1)">-</button>
+                        <span class="qty-num">1</span>
+                        <button onclick="changeQty(this, 1)">+</button>
+                    </div>
+                </div>
+            </div>
 
-    /* 수량 조절 버튼 */
-    .quantity-control { display: none; align-items: center; gap: 10px; background: white; padding: 5px 10px; border-radius: 15px; border: 1px solid #eee; }
-    .calc-item:has(input:checked) .quantity-control { display: flex; }
+            <div class="calc-group">
+                <div class="group-title">추가 옵션</div>
+                <div class="calc-item" data-price="20000">
+                    <label class="item-info">
+                        <input type="checkbox" class="main-check">
+                        <span class="item-name">상업적 이용 (방송용 등)</span>
+                        <span class="item-price">+2.0</span>
+                    </label>
+                </div>
+                <div class="calc-item" data-price="10000">
+                    <label class="item-info">
+                        <input type="checkbox" class="main-check">
+                        <span class="item-name">빠른 마감</span>
+                        <span class="item-price">+1.0</span>
+                    </label>
+                </div>
+            </div>
 
-    .quantity-control button { border: none; background: #6eb6ff; color: white; width: 24px; height: 24px; border-radius: 5px; cursor: pointer; font-weight: bold; }
-    .qty-num { font-size: 0.9rem; font-weight: bold; min-width: 15px; text-align: center; }
+            <div class="total-area">
+                <div class="total-label">합계 금액</div>
+                <div class="total-price"><span id="total-val">0</span>원</div>
+                <button class="copy-btn" onclick="copyQuote()">견적 복사하기 📋</button>
+            </div>
+        </div>
+    </div>
 
-    /* 총액 및 버튼 */
-    .total-area { margin-top: 30px; padding-top: 20px; border-top: 2px dashed #eee; text-align: center; }
-    .total-price { font-size: 2.2rem; font-weight: 900; color: #ff6b6b; margin: 10px 0; }
-    .copy-btn { background: #6eb6ff; color: white; border: none; padding: 10px 20px; border-radius: 15px; cursor: pointer; font-family: 'Gmarket Sans'; transition: 0.3s; }
-    .copy-btn:hover { background: #4a9eff; transform: translateY(-2px); }
-</style>
-
-<script>
-    // 금액 계산 함수
-    function updateTotal() {
-        let total = 0;
-        const items = document.querySelectorAll('.calc-item');
-        
-        items.forEach(item => {
-            const checkbox = item.querySelector('input');
-            if (checkbox.checked) {
-                const price = parseInt(item.getAttribute('data-price'));
-                const qtySpan = item.querySelector('.qty-num');
-                const qty = qtySpan ? parseInt(qtySpan.innerText) : 1;
-                total += price * qty;
+    <script>
+        // 휠 스크롤 제어
+        function handleWheel(event, slider) {
+            if (event.deltaY !== 0) {
+                event.preventDefault();
+                slider.scrollLeft += event.deltaY * 1.5;
             }
+        }
+
+        // 화살표 스크롤 제어
+        function scrollSlider(button, direction) {
+            const slider = button.parentElement.querySelector('.type-slider');
+            const scrollAmount = slider.offsetWidth * 0.8;
+            slider.scrollLeft += (scrollAmount * direction);
+        }
+
+        // 금액 계산 함수
+        function updateTotal() {
+            let total = 0;
+            const items = document.querySelectorAll('.calc-item');
+            
+            items.forEach(item => {
+                const checkbox = item.querySelector('input');
+                if (checkbox.checked) {
+                    const price = parseInt(item.getAttribute('data-price'));
+                    const qtySpan = item.querySelector('.qty-num');
+                    const qty = qtySpan ? parseInt(qtySpan.innerText) : 1;
+                    total += price * qty;
+                }
+            });
+            
+            document.getElementById('total-val').innerText = total.toLocaleString();
+        }
+
+        // 수량 변경 함수
+        function changeQty(btn, delta) {
+            const qtySpan = btn.parentElement.querySelector('.qty-num');
+            let currentQty = parseInt(qtySpan.innerText);
+            currentQty += delta;
+            if (currentQty < 1) currentQty = 1;
+            qtySpan.innerText = currentQty;
+            updateTotal();
+        }
+
+        // 이벤트 리스너 연결
+        document.querySelectorAll('.main-check').forEach(check => {
+            check.addEventListener('change', updateTotal);
         });
-        
-        document.getElementById('total-val').innerText = total.toLocaleString();
-    }
 
-    // 수량 변경 함수
-    function changeQty(btn, delta) {
-        const qtySpan = btn.parentElement.querySelector('.qty-num');
-        let currentQty = parseInt(qtySpan.innerText);
-        currentQty += delta;
-        if (currentQty < 1) currentQty = 1;
-        qtySpan.innerText = currentQty;
-        updateTotal();
-    }
-
-    // 체크박스 이벤트 연결
-    document.querySelectorAll('.main-check').forEach(check => {
-        check.addEventListener('change', updateTotal);
-    });
-
-    // 견적 복사 기능 (클라이언트가 신청서 작성할 때 편해요!)
-    function copyQuote() {
-        const total = document.getElementById('total-val').innerText;
-        alert("예상 견적 " + total + "원이 복사되었습니다! 신청서에 적어주세요.");
-    }
-</script>
+        // 견적 복사 기능
+        function copyQuote() {
+            const total = document.getElementById('total-val').innerText;
+            alert("예상 견적 " + total + "원이 복사되었습니다! 신청서에 적어주세요.");
+        }
+    </script>
 </body>
 </html>
