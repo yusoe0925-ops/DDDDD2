@@ -679,27 +679,82 @@
     .p-img-card.active-tong { transform: scale(1.08); border-color: #ffd93d; box-shadow: 0 10px 25px rgba(255, 217, 61, 0.3); animation: sojuTongTong 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 5; }
     @keyframes sojuTongTong { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1.08); } }
 
-    /* 7. 기타 (화살표 및 예약석 설정) */
-    .ready-card { 
-        display: flex; align-items: center; justify-content: center; 
-        background: #fafdff !important; color: #6eb6ff; font-weight: bold; 
-        border: 2px dashed #d0e8ff !important; position: relative; 
-        font-size: 0.9rem;
+   /* 화살표 기본 설정 */
+    .nav-arrow { 
+        position: absolute; 
+        top: 50%; 
+        transform: translateY(-50%); /* 세로 중앙 정렬 */
+        width: 45px; 
+        height: 45px; 
+        background: white; 
+        color: #6eb6ff; 
+        border: 2px solid #f0faff; 
+        border-radius: 50%; 
+        cursor: pointer; 
+        z-index: 100; /* 그림보다 무조건 위에! */
+        font-weight: bold; 
+        font-size: 1.2rem;
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1); /* 그림자 살짝 추가 */
+        transition: 0.2s;
     }
 
-    /* 사진 설정: 기본적으로는 안 보이게 숨겨둠! */
-    .ready-card img { 
-        position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-        object-fit: cover; z-index: 2; 
-        display: none; /* 👈 요게 핵심! 사진이 없으면 아예 자리를 안 차지하게 합니다 */
+    .nav-arrow:hover { 
+        background: #6eb6ff; 
+        color: white; 
+        transform: translateY(-50%) scale(1.1); 
     }
+
+    /* 왼쪽 화살표: 상자 왼쪽 끝에 걸치게 */
+    .prev { 
+        left: -20px !important; 
+    }
+
+    /* 오른쪽 화살표: 상자 오른쪽 끝에 걸치게 */
+    .next { 
+        right: -20px !important; 
+    }
+
+    /* 💡 중요: 화살표가 상자 밖으로 나가려면 부모 상자의 overflow 설정을 확인해야 해요 */
+    .slider-container-main {
+        position: relative;
+        overflow: visible !important; /* 화살표가 밖으로 튀어나와도 보이게! */
+    }
+    .soju-slider-wrapper { 
+    display: flex; 
+    overflow-x: auto; /* 스크롤은 가능하게! */
+    gap: 15px; 
+    padding: 10px 40px;
     
-    /* 사진이 성공적으로 로딩되면 다시 보이게 하는 마법 */
-    .ready-card img[src]:not([src=""]) { 
-        /* 나중에 파일이 연결되면 브라우저가 알아서 보여줄 거예요 */
-    }
+    /* ✨ 크롬, 사파리 등에서 스크롤바 숨기기 */
+    -ms-overflow-style: none; /* 인터넷 익스플로러 */
+    scrollbar-width: none; /* 파이어폭스 */
+}
 
-    .ready-card span { position: relative; z-index: 1; }
+.soju-slider-wrapper::-webkit-scrollbar {
+    display: none; /* 크롬, 엣지, 웨일 등에서 스크롤바 숨김 */
+}
+    /* 슬라이더 전용 예쁜 하단 스크롤바 디자인 */
+.soju-slider-wrapper::-webkit-scrollbar {
+    display: block !important; /* 다시 보이게 하되 */
+    height: 6px; /* 높이를 아주 얇게! */
+}
+
+.soju-slider-wrapper::-webkit-scrollbar-track {
+    background: #f0faff; /* 배경색 */
+    border-radius: 10px;
+}
+
+.soju-slider-wrapper::-webkit-scrollbar-thumb {
+    background: #6eb6ff; /* 스크롤바 핸들 색상 (작가님 메인컬러) */
+    border-radius: 10px;
+}
+
+.soju-slider-wrapper::-webkit-scrollbar-thumb:hover {
+    background: #ffd93d; /* 마우스 올리면 노란색으로 변신! */
+}
 </style>
 
 <script>
