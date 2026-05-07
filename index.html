@@ -651,24 +651,25 @@
 
     .soju-slider-wrapper { display: flex; overflow-x: hidden; gap: 15px; padding: 10px 40px; }
 
-    /* 4. ✨ 작가님이 요청하신 크기 수정 부분 */
+    /* 이미지 카드 크기 강제 고정! */
     .p-img-card { 
-        min-width: calc(33.333% - 10px); 
-        aspect-ratio: 1/1; 
+        width: 220px !important;  /* 👈 숫자를 줄이면 더 작아져요! (현재 220픽셀) */
+        height: 220px !important; /* 👈 가로랑 똑같은 숫자를 넣어주세요 */
         border-radius: 25px; 
         overflow: hidden; 
         flex-shrink: 0; 
         background: #f9f9f9; 
+        box-shadow: 0 5px 20px rgba(0,0,0,0.06); 
         border: 1px solid #f0f0f0; 
         transition: 0.3s;
     }
     
-    /* 5. ✨ 그림이 칸 밖으로 나가지 않게 꽉 채우는 설정 */
+    /* 카드 안의 그림도 카드 크기에 맞게 강제 고정! */
     .p-img-card img { 
-        width: 100%; 
-        height: 100%; 
-        object-fit: cover; /* 칸 크기에 맞춰 그림을 예쁘게 채워줍니다 */
-        pointer-events: none; 
+        width: 100% !important; 
+        height: 100% !important; 
+        object-fit: cover !important; 
+        display: block;
     }
 
     /* 6. 중앙 통통 효과 */
