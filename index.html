@@ -677,8 +677,22 @@
     .p-img-card.active-tong { transform: scale(1.08); border-color: #ffd93d; box-shadow: 0 10px 25px rgba(255, 217, 61, 0.3); animation: sojuTongTong 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 5; }
     @keyframes sojuTongTong { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1.08); } }
 
-    /* 7. 기타 (화살표 등) */
-    .ready-card { display: flex; align-items: center; justify-content: center; background: #f0faff !important; color: #6eb6ff; font-weight: bold; border: 2px dashed #6eb6ff !important; }
+    /* 7. 기타 (화살표 및 예약석 설정) */
+    .ready-card { 
+        display: flex; align-items: center; justify-content: center; 
+        background: #f0faff !important; color: #6eb6ff; font-weight: bold; 
+        border: 2px dashed #6eb6ff !important; position: relative; 
+    }
+
+    /* 사진이 들어오면 글자를 가려주는 설정 */
+    .ready-card img { 
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+        object-fit: cover; z-index: 2; 
+    }
+    
+    /* 사진이 없을 때 보여줄 글자 위치 */
+    .ready-card span { position: relative; z-index: 1; }
+
     .nav-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 40px; height: 40px; background: rgba(255, 255, 255, 0.9); color: #6eb6ff; border: 2px solid #f0faff; border-radius: 50%; cursor: pointer; z-index: 10; font-weight: bold; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
     .prev { left: -15px; }
     .next { right: -15px; }
