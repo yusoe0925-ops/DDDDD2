@@ -788,56 +788,45 @@
     <img src="사진이름.jpg" alt="" onerror="this.remove();">
     <span>준비 중 ✨</span>
 </div>
-    /* --- 모달창(크게 보기) 최종 스타일 --- */
-.modal {
+    /* --- 모달창 최종 디자인 --- */
+#sojuModal {
     display: none;
-    position: fixed; /* 화면에 고정 */
-    z-index: 10000 !important; /* 최상단 레이어 */
+    position: fixed; /* 화면에 딱 고정! 스크롤해도 안 움직임 */
+    z-index: 99999; 
     left: 0; top: 0;
     width: 100vw; height: 100vh;
-    background-color: rgba(0, 0, 0, 0.85); /* 배경 어둡게 */
-    backdrop-filter: blur(5px); /* 배경 흐리게 */
-    cursor: zoom-out;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-/* 모달이 활성화되었을 때 */
-.modal.active {
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
-    opacity: 1;
+    background-color: rgba(0, 0, 0, 0.95); /* 배경을 아주 어둡게 해서 밑에 안 보이게 함 */
+    justify-content: center; align-items: center;
+    backdrop-filter: blur(10px); /* 배경 흐릿하게 */
 }
 
 .modal-content {
-    max-width: 90%;
-    max-height: 90%;
-    object-fit: contain;
-    border-radius: 15px;
-    box-shadow: 0 5px 30px rgba(0,0,0,0.5);
-    transform: scale(0.7); /* 작게 시작 */
-    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); /* 튕기는 듯한 효과 */
+    max-width: 90%; max-height: 85%;
+    border-radius: 20px;
+    box-shadow: 0 0 30px rgba(0,0,0,0.5);
+    /* 우클릭 및 드래그 방지 */
+    -webkit-user-drag: none;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
 }
 
-.modal.active .modal-content {
-    transform: scale(1); /* 정크기로 커짐 */
-}
-
-/* 닫기 버튼 (X) */
-.close {
+.close-btn {
     position: absolute;
-    top: 20px; right: 30px;
+    top: 30px; right: 40px;
+    background: #6eb6ff; /* 작가님이 쓰시는 파란색 */
     color: white;
-    font-size: 50px;
-    font-weight: 200;
+    width: 50px; height: 50px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 30px; font-weight: bold;
     cursor: pointer;
-    z-index: 10001;
-    transition: 0.2s;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    line-height: 1;
 }
-.close:hover { color: #6eb6ff; transform: rotate(90deg); }
 
-/* 이미지에 마우스 올리면 돋보기 모양 */
+/* 이미지에 돋보기 커서 추가 */
 .p-img-card img { cursor: zoom-in !important; }
     
 </style>
@@ -945,6 +934,35 @@ document.addEventListener('click', function (e) {
     }
 
     window.onload = initSojuLoop;
+    // 모달 열기 (우클릭 방지 포함)
+function openModal(src) {
+    const modal = document.getElementById('sojuModal');
+    const modalImg = document.getElementById('imgFull');
+    modalImg.src = src;
+    modal.style.display = 'flex';
+    // 모달이 열려있을 때 바디 스크롤 막기 (밑에 그림 안 보이게)
+    document.body.style.overflow = 'hidden';
+}
+
+// 모달 닫기
+function closeModal() {
+    const modal = document.getElementById('sojuModal');
+    modal.style.display = 'none';
+    // 모달 닫으면 다시 스크롤 가능하게
+    document.body.style.overflow = 'auto';
+}
+
+// 모든 슬라이더 이미지에 클릭 이벤트 연결
+document.addEventListener('click', function(e) {
+    if (e.target.tagName === 'IMG' && e.target.closest('.p-img-card')) {
+        openModal(e.target.src);
+    }
+});
+
+// 전체 페이지 우클릭 방지 (선택 사항 - 이미지만 막으려면 위 HTML에만 넣으면 됨)
+document.getElementById('imgFull').addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+});
 </script>
 <style>
     /* 전체 컨테이너: 기본은 차분하고 깨끗한 파스텔 블루 */
@@ -1341,10 +1359,39 @@ document.addEventListener('click', function (e) {
         
         item.classList.toggle('active');
     }
+    // 모달 열기 (우클릭 방지 포함)
+function openModal(src) {
+    const modal = document.getElementById('sojuModal');
+    const modalImg = document.getElementById('imgFull');
+    modalImg.src = src;
+    modal.style.display = 'flex';
+    // 모달이 열려있을 때 바디 스크롤 막기 (밑에 그림 안 보이게)
+    document.body.style.overflow = 'hidden';
+}
+
+// 모달 닫기
+function closeModal() {
+    const modal = document.getElementById('sojuModal');
+    modal.style.display = 'none';
+    // 모달 닫으면 다시 스크롤 가능하게
+    document.body.style.overflow = 'auto';
+}
+
+// 모든 슬라이더 이미지에 클릭 이벤트 연결
+document.addEventListener('click', function(e) {
+    if (e.target.tagName === 'IMG' && e.target.closest('.p-img-card')) {
+        openModal(e.target.src);
+    }
+});
+
+// 전체 페이지 우클릭 방지 (선택 사항 - 이미지만 막으려면 위 HTML에만 넣으면 됨)
+document.getElementById('imgFull').addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+});
 </script>
-    <div id="sojuModal" class="modal" onclick="closeSojuModal()">
-    <span class="close">&times;</span>
-    <img class="modal-content" id="imgFull">
-</div>
+    <div id="sojuModal" onclick="closeModal()">
+    <span class="close-btn">&times;</span>
+    <img class="modal-content" id="imgFull" oncontextmenu="return false;"> 
+    </div>
 </body>
 </html>
