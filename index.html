@@ -788,56 +788,93 @@
     <img src="사진이름.jpg" alt="" onerror="this.remove();">
     <span>준비 중 ✨</span>
 </div>
-    /* 모달창 배경 */
+    /* --- 모달창(크게 보기) 최종 스타일 --- */
 .modal {
-    display: none; /* 기본은 숨김 */
-    position: fixed;
-    z-index: 1000;
+    display: none;
+    position: fixed; /* 화면에 고정 */
+    z-index: 10000 !important; /* 최상단 레이어 */
     left: 0; top: 0;
-    width: 100%; height: 100%;
-    background-color: rgba(0,0,0,0.8); /* 배경을 어둡게 */
+    width: 100vw; height: 100vh;
+    background-color: rgba(0, 0, 0, 0.85); /* 배경 어둡게 */
+    backdrop-filter: blur(5px); /* 배경 흐리게 */
     cursor: zoom-out;
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
-/* 크게 뜨는 이미지 */
+/* 모달이 활성화되었을 때 */
+.modal.active {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    opacity: 1;
+}
+
 .modal-content {
-    margin: auto;
-    display: block;
     max-width: 90%;
     max-height: 90%;
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
+    object-fit: contain;
     border-radius: 15px;
-    box-shadow: 0 0 20px rgba(255,255,255,0.2);
+    box-shadow: 0 5px 30px rgba(0,0,0,0.5);
+    transform: scale(0.7); /* 작게 시작 */
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); /* 튕기는 듯한 효과 */
 }
 
-/* 닫기 버튼 */
+.modal.active .modal-content {
+    transform: scale(1); /* 정크기로 커짐 */
+}
+
+/* 닫기 버튼 (X) */
 .close {
     position: absolute;
-    top: 20px; right: 35px;
+    top: 20px; right: 30px;
     color: white;
-    font-size: 40px;
-    font-weight: bold;
+    font-size: 50px;
+    font-weight: 200;
     cursor: pointer;
+    z-index: 10001;
+    transition: 0.2s;
 }
+.close:hover { color: #6eb6ff; transform: rotate(90deg); }
+
+/* 이미지에 마우스 올리면 돋보기 모양 */
+.p-img-card img { cursor: zoom-in !important; }
     
 </style>
 
 <script>
-    // 이미지 클릭 시 모달 열기
-function openSojuModal(imgElement) {
+// 모달 열기 함수
+function openSojuModal(imgSrc) {
     const modal = document.getElementById("sojuModal");
     const modalImg = document.getElementById("imgFull");
     
-    modal.style.display = "block";
-    modalImg.src = imgElement.src; // 클릭한 이미지의 주소를 큰 창에 복사
+    modalImg.src = imgSrc;
+    modal.style.display = "flex";
+    
+    // 애니메이션을 위해 아주 잠깐 뒤에 active 클래스 추가
+    setTimeout(() => {
+        modal.classList.add("active");
+    }, 10);
 }
 
-// 모달 닫기
+// 모달 닫기 함수
 function closeSojuModal() {
-    document.getElementById("sojuModal").style.display = "none";
+    const modal = document.getElementById("sojuModal");
+    modal.classList.remove("active");
+    
+    // 애니메이션이 끝난 후 완전히 숨김
+    setTimeout(() => {
+        modal.style.display = "none";
+    }, 300);
 }
+
+// 슬라이더 내 이미지 클릭 감지 (복제된 이미지도 작동하게)
+document.addEventListener('click', function (e) {
+    const clickedImg = e.target.closest('.p-img-card img');
+    if (clickedImg) {
+        openSojuModal(clickedImg.src);
+    }
+});
     // 복제 및 무한 루프 로직
     function initSojuLoop() {
         const wrappers = document.querySelectorAll('.soju-slider-wrapper');
